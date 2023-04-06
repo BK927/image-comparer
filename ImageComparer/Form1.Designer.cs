@@ -30,6 +30,8 @@
         {
             this.ui_main = new System.Windows.Forms.TableLayoutPanel();
             this.uiTlp_Sub = new System.Windows.Forms.TableLayoutPanel();
+            this.original_pic = new System.Windows.Forms.PictureBox();
+            this.compare_pic = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.original_img_btn = new System.Windows.Forms.Button();
             this.orginal_img_txt_folder = new System.Windows.Forms.TextBox();
@@ -39,18 +41,16 @@
             this.compare_txt_folder = new System.Windows.Forms.TextBox();
             this.compare_label = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.save_btn = new System.Windows.Forms.Button();
             this.tag_box = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.save_btn = new System.Windows.Forms.Button();
-            this.original_pic = new System.Windows.Forms.PictureBox();
-            this.compare_pic = new System.Windows.Forms.PictureBox();
             this.ui_main.SuspendLayout();
             this.uiTlp_Sub.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.original_pic)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.original_pic)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).BeginInit();
             this.SuspendLayout();
             // 
             // ui_main
@@ -92,6 +92,28 @@
             this.uiTlp_Sub.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.uiTlp_Sub.Size = new System.Drawing.Size(1053, 550);
             this.uiTlp_Sub.TabIndex = 3;
+            // 
+            // original_pic
+            // 
+            this.original_pic.BackColor = System.Drawing.Color.DimGray;
+            this.original_pic.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.original_pic.Location = new System.Drawing.Point(8, 9);
+            this.original_pic.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.original_pic.Name = "original_pic";
+            this.original_pic.Size = new System.Drawing.Size(515, 532);
+            this.original_pic.TabIndex = 1;
+            this.original_pic.TabStop = false;
+            // 
+            // compare_pic
+            // 
+            this.compare_pic.BackColor = System.Drawing.Color.DimGray;
+            this.compare_pic.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.compare_pic.Location = new System.Drawing.Point(529, 8);
+            this.compare_pic.Name = "compare_pic";
+            this.compare_pic.Size = new System.Drawing.Size(516, 534);
+            this.compare_pic.TabIndex = 2;
+            this.compare_pic.TabStop = false;
+            this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
             // 
             // panel1
             // 
@@ -206,6 +228,18 @@
             this.panel4.Size = new System.Drawing.Size(1053, 104);
             this.panel4.TabIndex = 5;
             // 
+            // save_btn
+            // 
+            this.save_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.save_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.save_btn.Location = new System.Drawing.Point(983, 5);
+            this.save_btn.Name = "save_btn";
+            this.save_btn.Size = new System.Drawing.Size(62, 96);
+            this.save_btn.TabIndex = 2;
+            this.save_btn.Text = "save";
+            this.save_btn.UseVisualStyleBackColor = true;
+            this.save_btn.Click += new System.EventHandler(this.save_btn_Click);
+            // 
             // tag_box
             // 
             this.tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -230,39 +264,6 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Tags";
             // 
-            // save_btn
-            // 
-            this.save_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.save_btn.Location = new System.Drawing.Point(983, 5);
-            this.save_btn.Name = "save_btn";
-            this.save_btn.Size = new System.Drawing.Size(62, 96);
-            this.save_btn.TabIndex = 2;
-            this.save_btn.Text = "save";
-            this.save_btn.UseVisualStyleBackColor = true;
-            this.save_btn.Click += new System.EventHandler(this.save_btn_Click);
-            // 
-            // original_pic
-            // 
-            this.original_pic.BackColor = System.Drawing.Color.DimGray;
-            this.original_pic.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.original_pic.Location = new System.Drawing.Point(8, 9);
-            this.original_pic.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.original_pic.Name = "original_pic";
-            this.original_pic.Size = new System.Drawing.Size(515, 532);
-            this.original_pic.TabIndex = 1;
-            this.original_pic.TabStop = false;
-            // 
-            // compare_pic
-            // 
-            this.compare_pic.BackColor = System.Drawing.Color.DimGray;
-            this.compare_pic.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.compare_pic.Location = new System.Drawing.Point(529, 8);
-            this.compare_pic.Name = "compare_pic";
-            this.compare_pic.Size = new System.Drawing.Size(516, 534);
-            this.compare_pic.TabIndex = 2;
-            this.compare_pic.TabStop = false;
-            this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -275,14 +276,14 @@
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.ui_main.ResumeLayout(false);
             this.uiTlp_Sub.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.original_pic)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.original_pic)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).EndInit();
             this.ResumeLayout(false);
 
         }

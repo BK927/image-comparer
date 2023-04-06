@@ -140,13 +140,9 @@ namespace WindowsFormsApplication5
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Left)
+            if (e.KeyCode == Keys.Enter)
             {
-                if (currentIdx >= 1)
-                {
-                    this.currentIdx--;
-                    showImage(this.currentIdx);
-                }
+                saveTags();
             }
 
             // Doesn't work on editing tag.
@@ -191,6 +187,7 @@ namespace WindowsFormsApplication5
                     comparisonImgs = null;
                     filteredOriginals = null;
                     filteredComparions = null;
+                    currentIdx = -1;
                     tagDic = null;
 
                     original_pic.Image = null;
@@ -198,14 +195,14 @@ namespace WindowsFormsApplication5
                     return;
                 }
 
-                if (currentIdx == filteredComparions.Count - 1)
-                {
-                    currentIdx--;
-                }
-                else
-                {
-                    currentIdx++;
-                }
+                //if (currentIdx == filteredComparions.Count - 1)
+                //{
+                //    currentIdx--;
+                //}
+                //else
+                //{
+                //    currentIdx++;
+                //}
                 showImage(currentIdx);
             }
         }
@@ -278,11 +275,19 @@ namespace WindowsFormsApplication5
 
         private void save_btn_Click(object sender, EventArgs e)
         {
-            using (StreamWriter outputFile = new StreamWriter(getTag(this.filteredOriginals[currentIdx]), true))
+            saveTags();
+        }
+
+        private void saveTags()
+        {
+            if (filteredOriginals != null)
             {
-                outputFile.WriteLine(tag_box.Text);
+                using (StreamWriter outputFile = new StreamWriter(getTag(this.filteredOriginals[currentIdx]), false))
+                {
+                    outputFile.Write(tag_box.Text);
+                }
+                MessageBox.Show("Successfully saved");
             }
-            MessageBox.Show("Successfully saved");
         }
     }
 }
