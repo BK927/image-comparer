@@ -32,7 +32,7 @@
             this.uiTlp_Sub = new System.Windows.Forms.TableLayoutPanel();
             this.original_pic = new System.Windows.Forms.PictureBox();
             this.compare_pic = new System.Windows.Forms.PictureBox();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.header_panel = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.original_img_btn = new System.Windows.Forms.Button();
@@ -47,13 +47,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tag_box = new System.Windows.Forms.TextBox();
             this.panel4 = new System.Windows.Forms.Panel();
-            this.freq_tag_box = new System.Windows.Forms.ListBox();
             this.add_tag_box = new System.Windows.Forms.TextBox();
+            this.freq_tag_box = new System.Windows.Forms.ListBox();
             this.ui_main.SuspendLayout();
             this.uiTlp_Sub.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.original_pic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).BeginInit();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.header_panel.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -67,7 +67,7 @@
             this.ui_main.ColumnCount = 1;
             this.ui_main.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.ui_main.Controls.Add(this.uiTlp_Sub, 0, 1);
-            this.ui_main.Controls.Add(this.tableLayoutPanel1, 0, 0);
+            this.ui_main.Controls.Add(this.header_panel, 0, 0);
             this.ui_main.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ui_main.Location = new System.Drawing.Point(0, 0);
             this.ui_main.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -120,23 +120,22 @@
             this.compare_pic.TabStop = false;
             this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
             // 
-            // tableLayoutPanel1
+            // header_panel
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.header_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panel4, 1, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1053, 224);
-            this.tableLayoutPanel1.TabIndex = 6;
+            this.header_panel.ColumnCount = 2;
+            this.header_panel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.header_panel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
+            this.header_panel.Controls.Add(this.tableLayoutPanel2, 0, 0);
+            this.header_panel.Controls.Add(this.panel4, 1, 0);
+            this.header_panel.Location = new System.Drawing.Point(3, 3);
+            this.header_panel.Name = "header_panel";
+            this.header_panel.RowCount = 1;
+            this.header_panel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.header_panel.Size = new System.Drawing.Size(1053, 224);
+            this.header_panel.TabIndex = 6;
             // 
             // tableLayoutPanel2
             // 
@@ -154,7 +153,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(927, 218);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(887, 218);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // panel2
@@ -167,7 +166,7 @@
             this.panel2.Controls.Add(this.orginal_img_txt_folder);
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(921, 49);
+            this.panel2.Size = new System.Drawing.Size(881, 49);
             this.panel2.TabIndex = 0;
             // 
             // original_img_btn
@@ -176,7 +175,7 @@
             this.original_img_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.original_img_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.original_img_btn.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.original_img_btn.Location = new System.Drawing.Point(836, 4);
+            this.original_img_btn.Location = new System.Drawing.Point(796, 4);
             this.original_img_btn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.original_img_btn.Name = "original_img_btn";
             this.original_img_btn.Size = new System.Drawing.Size(82, 39);
@@ -205,7 +204,7 @@
             this.orginal_img_txt_folder.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.orginal_img_txt_folder.Name = "orginal_img_txt_folder";
             this.orginal_img_txt_folder.ReadOnly = true;
-            this.orginal_img_txt_folder.Size = new System.Drawing.Size(649, 18);
+            this.orginal_img_txt_folder.Size = new System.Drawing.Size(609, 18);
             this.orginal_img_txt_folder.TabIndex = 3;
             this.orginal_img_txt_folder.TextChanged += new System.EventHandler(this.orginal_img_txt_folder_TextChanged);
             this.orginal_img_txt_folder.DragDrop += new System.Windows.Forms.DragEventHandler(this.orginal_img_txt_folder_DragDrop);
@@ -221,14 +220,14 @@
             this.panel1.Controls.Add(this.compare_txt_folder);
             this.panel1.Location = new System.Drawing.Point(3, 58);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(921, 49);
+            this.panel1.Size = new System.Drawing.Size(881, 49);
             this.panel1.TabIndex = 1;
             // 
             // compare_img_btn
             // 
             this.compare_img_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.compare_img_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.compare_img_btn.Location = new System.Drawing.Point(836, 3);
+            this.compare_img_btn.Location = new System.Drawing.Point(796, 3);
             this.compare_img_btn.Name = "compare_img_btn";
             this.compare_img_btn.Size = new System.Drawing.Size(82, 43);
             this.compare_img_btn.TabIndex = 2;
@@ -256,7 +255,7 @@
             this.compare_txt_folder.Location = new System.Drawing.Point(181, 13);
             this.compare_txt_folder.Name = "compare_txt_folder";
             this.compare_txt_folder.ReadOnly = true;
-            this.compare_txt_folder.Size = new System.Drawing.Size(649, 18);
+            this.compare_txt_folder.Size = new System.Drawing.Size(609, 18);
             this.compare_txt_folder.TabIndex = 1;
             this.compare_txt_folder.TextChanged += new System.EventHandler(this.compare_txt_folder_TextChanged);
             this.compare_txt_folder.DragDrop += new System.Windows.Forms.DragEventHandler(this.compare_txt_folder_DragDrop);
@@ -272,14 +271,14 @@
             this.panel3.Controls.Add(this.tag_box);
             this.panel3.Location = new System.Drawing.Point(3, 113);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(921, 104);
+            this.panel3.Size = new System.Drawing.Size(881, 104);
             this.panel3.TabIndex = 2;
             // 
             // save_btn
             // 
             this.save_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.save_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.save_btn.Location = new System.Drawing.Point(836, 3);
+            this.save_btn.Location = new System.Drawing.Point(796, 3);
             this.save_btn.Name = "save_btn";
             this.save_btn.Size = new System.Drawing.Size(82, 98);
             this.save_btn.TabIndex = 2;
@@ -309,7 +308,7 @@
             this.tag_box.Location = new System.Drawing.Point(181, 3);
             this.tag_box.Multiline = true;
             this.tag_box.Name = "tag_box";
-            this.tag_box.Size = new System.Drawing.Size(649, 98);
+            this.tag_box.Size = new System.Drawing.Size(609, 98);
             this.tag_box.TabIndex = 1;
             this.tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tag_box_KeyPress);
             // 
@@ -320,10 +319,20 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel4.Controls.Add(this.add_tag_box);
             this.panel4.Controls.Add(this.freq_tag_box);
-            this.panel4.Location = new System.Drawing.Point(936, 3);
+            this.panel4.Location = new System.Drawing.Point(896, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(114, 218);
+            this.panel4.Size = new System.Drawing.Size(154, 218);
             this.panel4.TabIndex = 1;
+            // 
+            // add_tag_box
+            // 
+            this.add_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.add_tag_box.Location = new System.Drawing.Point(3, 189);
+            this.add_tag_box.Name = "add_tag_box";
+            this.add_tag_box.Size = new System.Drawing.Size(145, 25);
+            this.add_tag_box.TabIndex = 1;
+            this.add_tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.add_tag_box_KeyPress);
             // 
             // freq_tag_box
             // 
@@ -334,19 +343,9 @@
             this.freq_tag_box.ItemHeight = 20;
             this.freq_tag_box.Location = new System.Drawing.Point(4, 0);
             this.freq_tag_box.Name = "freq_tag_box";
-            this.freq_tag_box.Size = new System.Drawing.Size(105, 184);
+            this.freq_tag_box.Size = new System.Drawing.Size(145, 184);
             this.freq_tag_box.TabIndex = 0;
             this.freq_tag_box.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.freq_tag_box_MouseDoubleClick);
-            // 
-            // add_tag_box
-            // 
-            this.add_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.add_tag_box.Location = new System.Drawing.Point(3, 189);
-            this.add_tag_box.Name = "add_tag_box";
-            this.add_tag_box.Size = new System.Drawing.Size(105, 25);
-            this.add_tag_box.TabIndex = 1;
-            this.add_tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.add_tag_box_KeyPress);
             // 
             // Form1
             // 
@@ -364,7 +363,7 @@
             this.uiTlp_Sub.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.original_pic)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).EndInit();
-            this.tableLayoutPanel1.ResumeLayout(false);
+            this.header_panel.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
@@ -393,7 +392,7 @@
         private System.Windows.Forms.TextBox tag_box;
         private System.Windows.Forms.Button original_img_btn;
         private System.Windows.Forms.Button save_btn;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel header_panel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel1;

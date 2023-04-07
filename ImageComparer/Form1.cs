@@ -10,6 +10,7 @@ using static System.Net.WebRequestMethods;
 using System.Globalization;
 using static System.Net.Mime.MediaTypeNames;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 
 namespace WindowsFormsApplication5
@@ -345,9 +346,9 @@ namespace WindowsFormsApplication5
 
         private void freq_tag_box_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            var selectedItem = freq_tag_box.SelectedItem;
+            var selectedItem = freq_tag_box.SelectedItem.ToString();
 
-            if (selectedItem != null && tag_box.Text != string.Empty)
+            if (freq_tag_box.SelectedItem != null && tag_box.Text != string.Empty)
             {
                 char[] separator = { ',' };
 
@@ -355,13 +356,52 @@ namespace WindowsFormsApplication5
                 var parts = tag_box.Text.Split(separator, StringSplitOptions.RemoveEmptyEntries)
                           .Select(part => part.Trim())
                           .ToList();
-                if (!parts.Contains(selectedItem)) {
-                    int middleIndex = parts.Count / 2;
-                    parts.Insert(middleIndex, selectedItem.ToString());
-                    tag_box.Text = string.Join(", ", parts);
-                    saveTags();
+
+                string pattern = @"\(([^\(\):]+):([\d.]+)\)|([^\(\):]+)";
+
+
+                bool add = true; // Set to 'true' for addition, 'false' for subtraction
+
+                string updatedItem = null;
+
+                int matchedIndex = -1;
+
+                for (int i = 0; i < parts.Count; i++)
+                {
+                    string item = parts[i];
+                    Match match = Regex.Match(item, pattern);
+                    string tag = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[3].Value;
+                    string weight = match.Groups[2].Value;
+
+                    if (tag.Equals(selectedItem))
+                    {
+                        if (string.IsNullOrEmpty(weight))
+                        {
+                            updatedItem = $"({tag}:1.1)";
+                        }
+                        else
+                        {
+                            double newWeight = add ? double.Parse(weight) + 0.1 : double.Parse(weight) - 0.1;
+                            updatedItem = $"({tag}:{newWeight})";
+                        }
+                        matchedIndex = i;
+                        break;
+                    }
                 }
+
+                if (updatedItem != null)
+                {
+                    parts[matchedIndex] = updatedItem;
+                }
+                else
+                {
+                    int middleIndex = parts.Count / 2;
+                    parts.Insert(middleIndex, selectedItem);
+                }
+                tag_box.Text = string.Join(", ", parts);
+                saveTags();
             }
         }
+
     }
 }
