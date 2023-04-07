@@ -409,11 +409,6 @@ namespace WindowsFormsApplication5
             }
         }
 
-        private void freq_tag_box_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            quick_tag(e);
-        }
-
         private void freq_tag_box_MouseUp(object sender, MouseEventArgs e)
         {
             quick_tag(e);
