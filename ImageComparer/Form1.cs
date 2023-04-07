@@ -344,9 +344,10 @@ namespace WindowsFormsApplication5
             }
         }
 
-        private void freq_tag_box_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void quick_tag(MouseEventArgs e)
         {
             var selectedItem = freq_tag_box.SelectedItem.ToString();
+            bool add = (e.Button == MouseButtons.Left); // Set to 'true' for addition, 'false' for subtraction
 
             if (freq_tag_box.SelectedItem != null && tag_box.Text != string.Empty)
             {
@@ -358,9 +359,6 @@ namespace WindowsFormsApplication5
                           .ToList();
 
                 string pattern = @"\(([^\(\):]+):([\d.]+)\)|([^\(\):]+)";
-
-
-                bool add = true; // Set to 'true' for addition, 'false' for subtraction
 
                 string updatedItem = null;
 
@@ -389,19 +387,36 @@ namespace WindowsFormsApplication5
                     }
                 }
 
-                if (updatedItem != null)
+                if (e.Button == MouseButtons.Middle)
                 {
-                    parts[matchedIndex] = updatedItem;
+                    parts.RemoveAt(matchedIndex);
                 }
                 else
                 {
-                    int middleIndex = parts.Count / 2;
-                    parts.Insert(middleIndex, selectedItem);
+                    if (updatedItem != null)
+                    {
+                        parts[matchedIndex] = updatedItem;
+                    }
+                    else
+                    {
+                        int middleIndex = parts.Count / 2;
+                        parts.Insert(middleIndex, selectedItem);
+                    }
                 }
+                
                 tag_box.Text = string.Join(", ", parts);
                 saveTags();
             }
         }
 
+        private void freq_tag_box_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            quick_tag(e);
+        }
+
+        private void freq_tag_box_MouseUp(object sender, MouseEventArgs e)
+        {
+            quick_tag(e);
+        }
     }
 }
