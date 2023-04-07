@@ -160,8 +160,19 @@ namespace WindowsFormsApplication5
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Delete && freq_tag_box.Focused)
+            {
+                if (freq_tag_box.SelectedItem != null)
+                {
+                    // Remove the selected item
+                    freq_tag_box.Items.Remove(freq_tag_box.SelectedItem);
+                    save_quick_tags();
+                }
+                return;
+            }
+
             // Doesn't work on editing tag.
-            if (tag_box.Focused  || add_tag_box.Focused)
+            if (tag_box.Focused  || add_tag_box.Focused || freq_tag_box.Focused)
                 return;
 
             if (e.KeyCode == Keys.Left)
@@ -309,6 +320,15 @@ namespace WindowsFormsApplication5
             }
         }
 
+        private void save_quick_tags()
+        {
+            var itmes = string.Join(", ", freq_tag_box.Items.OfType<string>());
+            using (StreamWriter tagFile = new StreamWriter(TAG_PATH))
+            {
+                tagFile.Write(itmes);
+            }
+        }
+
         private void add_tag_box_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
@@ -319,11 +339,7 @@ namespace WindowsFormsApplication5
                 freq_tag_box.Items.Add(add_tag_box.Text);
                 add_tag_box.Text = string.Empty;
 
-                var itmes = string.Join(", ", freq_tag_box.Items.OfType<string>());
-                using (StreamWriter tagFile = new StreamWriter(TAG_PATH))
-                {
-                    tagFile.Write(itmes);
-                }
+                save_quick_tags();
             }
         }
 
@@ -339,10 +355,12 @@ namespace WindowsFormsApplication5
                 var parts = tag_box.Text.Split(separator, StringSplitOptions.RemoveEmptyEntries)
                           .Select(part => part.Trim())
                           .ToList();
-                int middleIndex = parts.Count / 2;
-                parts.Insert(middleIndex, selectedItem.ToString());
-                tag_box.Text = string.Join(", ", parts);
-                saveTags();
+                if (!parts.Contains(selectedItem)) {
+                    int middleIndex = parts.Count / 2;
+                    parts.Insert(middleIndex, selectedItem.ToString());
+                    tag_box.Text = string.Join(", ", parts);
+                    saveTags();
+                }
             }
         }
     }
