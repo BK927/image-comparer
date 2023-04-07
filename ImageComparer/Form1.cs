@@ -7,6 +7,10 @@ using System.Linq;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
 using static System.Net.WebRequestMethods;
+using System.Globalization;
+using static System.Net.Mime.MediaTypeNames;
+using System.Collections;
+
 
 namespace WindowsFormsApplication5
 {
@@ -18,6 +22,7 @@ namespace WindowsFormsApplication5
         List<string> filteredComparions = null;
         HashSet<string> tagDic = null;
         string delReserved = null;
+        const string TAG_PATH = "tag.dat";
 
         int currentIdx = -1;
 
@@ -29,11 +34,26 @@ namespace WindowsFormsApplication5
         {
             InitializeComponent();
 
-            this.KeyPreview = true;
-            this.AllowDrop = true;
-
             this.original_img_btn.Click += Original_Img_Btn_Click;
             this.initialTitle = this.Text;
+            tag_box.Text = string.Empty;
+
+            if (System.IO.File.Exists(TAG_PATH))
+            {
+                string text = System.IO.File.ReadAllText(TAG_PATH);
+
+                char[] separator = { ',' };
+
+                // Split the string by commas
+                string[] parts = text.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+
+                // Trim the whitespace around each element
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    parts[i] = parts[i].Trim();
+                    freq_tag_box.Items.Add(parts[i]);
+                }
+            }
         }
 
         private void Original_Img_Btn_Click(object sender, EventArgs e)
@@ -98,7 +118,7 @@ namespace WindowsFormsApplication5
         {
             this.currentIdx = idx;
 
-            original_pic.Image = Image.FromFile(this.filteredOriginals[idx]);
+            original_pic.Image = System.Drawing.Image.FromFile(this.filteredOriginals[idx]);
             original_pic.SizeMode = PictureBoxSizeMode.Zoom;
             compare_pic.LoadAsync(this.filteredComparions[idx]);
             compare_pic.SizeMode = PictureBoxSizeMode.Zoom;
@@ -140,13 +160,8 @@ namespace WindowsFormsApplication5
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                saveTags();
-            }
-
             // Doesn't work on editing tag.
-            if (tag_box.Focused)
+            if (tag_box.Focused  || add_tag_box.Focused)
                 return;
 
             if (e.KeyCode == Keys.Left)
@@ -195,14 +210,6 @@ namespace WindowsFormsApplication5
                     return;
                 }
 
-                //if (currentIdx == filteredComparions.Count - 1)
-                //{
-                //    currentIdx--;
-                //}
-                //else
-                //{
-                //    currentIdx++;
-                //}
                 showImage(currentIdx);
             }
         }
@@ -276,6 +283,7 @@ namespace WindowsFormsApplication5
         private void save_btn_Click(object sender, EventArgs e)
         {
             saveTags();
+            MessageBox.Show("Successfully saved");
         }
 
         private void saveTags()
@@ -286,7 +294,55 @@ namespace WindowsFormsApplication5
                 {
                     outputFile.Write(tag_box.Text);
                 }
+            }
+        }
+
+        private void tag_box_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                // Suppress the newline character
+                e.Handled = true;
+
+                saveTags();
                 MessageBox.Show("Successfully saved");
+            }
+        }
+
+        private void add_tag_box_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                // Suppress the newline character
+                e.Handled = true;
+
+                freq_tag_box.Items.Add(add_tag_box.Text);
+                add_tag_box.Text = string.Empty;
+
+                var itmes = string.Join(", ", freq_tag_box.Items.OfType<string>());
+                using (StreamWriter tagFile = new StreamWriter(TAG_PATH))
+                {
+                    tagFile.Write(itmes);
+                }
+            }
+        }
+
+        private void freq_tag_box_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            var selectedItem = freq_tag_box.SelectedItem;
+
+            if (selectedItem != null && tag_box.Text != string.Empty)
+            {
+                char[] separator = { ',' };
+
+                // Split the string by commas
+                var parts = tag_box.Text.Split(separator, StringSplitOptions.RemoveEmptyEntries)
+                          .Select(part => part.Trim())
+                          .ToList();
+                int middleIndex = parts.Count / 2;
+                parts.Insert(middleIndex, selectedItem.ToString());
+                tag_box.Text = string.Join(", ", parts);
+                saveTags();
             }
         }
     }
