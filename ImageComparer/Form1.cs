@@ -35,7 +35,7 @@ namespace ImageComparer
         {
             InitializeComponent();
 
-            MiddleMouseMessageFilter messageFilter = new MiddleMouseMessageFilter(freq_tag_box);
+            MiddleMouseMessageFilter messageFilter = new MiddleMouseMessageFilter(quick_tag_box);
             messageFilter.MiddleMouseClick += MessageFilter_MiddleMouseClick;
             System.Windows.Forms.Application.AddMessageFilter(messageFilter);
 
@@ -56,7 +56,7 @@ namespace ImageComparer
                 for (int i = 0; i < parts.Length; i++)
                 {
                     parts[i] = parts[i].Trim();
-                    freq_tag_box.Items.Add(parts[i]);
+                    quick_tag_box.Items.Add(parts[i]);
                 }
             }
         }
@@ -170,19 +170,19 @@ namespace ImageComparer
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete && freq_tag_box.Focused)
+            if (e.KeyCode == Keys.Delete && quick_tag_box.Focused)
             {
-                if (freq_tag_box.SelectedItem != null)
+                if (quick_tag_box.SelectedItem != null)
                 {
                     // Remove the selected item
-                    freq_tag_box.Items.Remove(freq_tag_box.SelectedItem);
+                    quick_tag_box.Items.Remove(quick_tag_box.SelectedItem);
                     save_quick_tags();
                 }
                 return;
             }
 
             // Doesn't work on editing tag.
-            if (tag_box.Focused  || add_tag_box.Focused || freq_tag_box.Focused)
+            if (tag_box.Focused  || add_tag_box.Focused || quick_tag_box.Focused)
                 return;
 
             if (e.KeyCode == Keys.Left)
@@ -332,7 +332,7 @@ namespace ImageComparer
 
         private void save_quick_tags()
         {
-            var itmes = string.Join(", ", freq_tag_box.Items.OfType<string>());
+            var itmes = string.Join(", ", quick_tag_box.Items.OfType<string>());
             using (StreamWriter tagFile = new StreamWriter(TAG_PATH))
             {
                 tagFile.Write(itmes);
@@ -346,7 +346,7 @@ namespace ImageComparer
                 // Suppress the newline character
                 e.Handled = true;
 
-                freq_tag_box.Items.Add(add_tag_box.Text);
+                quick_tag_box.Items.Add(add_tag_box.Text);
                 add_tag_box.Text = string.Empty;
 
                 save_quick_tags();
@@ -355,10 +355,10 @@ namespace ImageComparer
 
         private void quick_tag(MouseEventArgs e)
         {
-            if (freq_tag_box.SelectedItem == null)
+            if (quick_tag_box.SelectedItem == null)
                 return;
 
-            var selectedItem = freq_tag_box.SelectedItem.ToString();
+            var selectedItem = quick_tag_box.SelectedItem.ToString();
             bool add = (e.Button == MouseButtons.Left); // Set to 'true' for addition, 'false' for subtraction
 
             if (tag_box.Text != string.Empty)
@@ -428,7 +428,7 @@ namespace ImageComparer
             }
         }
 
-        private void freq_tag_box_MouseUp(object sender, MouseEventArgs e)
+        private void quick_tag_box_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left)
             {
@@ -441,7 +441,7 @@ namespace ImageComparer
         {
             base.OnMouseWheel(e);
 
-            if (freq_tag_box.Focused)
+            if (quick_tag_box.Focused)
                 return;
 
             if (e.Delta > 0)
@@ -471,7 +471,7 @@ namespace ImageComparer
             }
         }
 
-        private void freq_tag_box_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void quick_tag_box_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             quick_tag(e);
         }

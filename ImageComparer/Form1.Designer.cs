@@ -48,7 +48,7 @@
             this.tag_box = new System.Windows.Forms.TextBox();
             this.panel4 = new System.Windows.Forms.Panel();
             this.add_tag_box = new System.Windows.Forms.TextBox();
-            this.freq_tag_box = new System.Windows.Forms.ListBox();
+            this.quick_tag_box = new System.Windows.Forms.ListBox();
             this.ui_main.SuspendLayout();
             this.uiTlp_Sub.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.original_pic)).BeginInit();
@@ -318,7 +318,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel4.Controls.Add(this.add_tag_box);
-            this.panel4.Controls.Add(this.freq_tag_box);
+            this.panel4.Controls.Add(this.quick_tag_box);
             this.panel4.Location = new System.Drawing.Point(896, 3);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(154, 218);
@@ -334,19 +334,19 @@
             this.add_tag_box.TabIndex = 1;
             this.add_tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.add_tag_box_KeyPress);
             // 
-            // freq_tag_box
+            // quick_tag_box
             // 
-            this.freq_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.quick_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.freq_tag_box.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.freq_tag_box.FormattingEnabled = true;
-            this.freq_tag_box.ItemHeight = 20;
-            this.freq_tag_box.Location = new System.Drawing.Point(4, 0);
-            this.freq_tag_box.Name = "freq_tag_box";
-            this.freq_tag_box.Size = new System.Drawing.Size(145, 184);
-            this.freq_tag_box.TabIndex = 0;
-            this.freq_tag_box.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.freq_tag_box_MouseDoubleClick);
-            this.freq_tag_box.MouseUp += new System.Windows.Forms.MouseEventHandler(this.freq_tag_box_MouseUp);
+            this.quick_tag_box.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.quick_tag_box.FormattingEnabled = true;
+            this.quick_tag_box.ItemHeight = 20;
+            this.quick_tag_box.Location = new System.Drawing.Point(4, 0);
+            this.quick_tag_box.Name = "quick_tag_box";
+            this.quick_tag_box.Size = new System.Drawing.Size(145, 184);
+            this.quick_tag_box.TabIndex = 0;
+            this.quick_tag_box.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseDoubleClick);
+            this.quick_tag_box.MouseUp += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseUp);
             // 
             // Form1
             // 
@@ -400,7 +400,7 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.TextBox add_tag_box;
-        private System.Windows.Forms.ListBox freq_tag_box;
+        private System.Windows.Forms.ListBox quick_tag_box;
     }
 }
 
