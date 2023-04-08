@@ -13,7 +13,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 
 
-namespace WindowsFormsApplication5
+namespace ImageComparer
 {
     public partial class Form1 : Form
     {
@@ -35,6 +35,10 @@ namespace WindowsFormsApplication5
         {
             InitializeComponent();
 
+            MiddleMouseMessageFilter messageFilter = new MiddleMouseMessageFilter(freq_tag_box);
+            messageFilter.MiddleMouseClick += MessageFilter_MiddleMouseClick;
+            System.Windows.Forms.Application.AddMessageFilter(messageFilter);
+
             this.original_img_btn.Click += Original_Img_Btn_Click;
             this.initialTitle = this.Text;
             tag_box.Text = string.Empty;
@@ -55,6 +59,11 @@ namespace WindowsFormsApplication5
                     freq_tag_box.Items.Add(parts[i]);
                 }
             }
+        }
+
+        private void MessageFilter_MiddleMouseClick(object sender, MouseEventArgs e)
+        {
+             deleteImg();
         }
 
         private void Original_Img_Btn_Click(object sender, EventArgs e)
@@ -178,52 +187,52 @@ namespace WindowsFormsApplication5
 
             if (e.KeyCode == Keys.Left)
             {
-                if (currentIdx >= 1)
-                {
-                    this.currentIdx--;
-                    showImage(this.currentIdx);
-                }
+                flipToPrevImg();
             }
 
             if (e.KeyCode == Keys.Right)
             {
-                if (currentIdx < this.filteredOriginals.Count - 1)
-                {
-                    this.currentIdx++;
-                    showImage(this.currentIdx);
-                }
+                flipToNextImg();
             }
 
             if (e.KeyCode == Keys.Delete)
             {
-                var tmp = compare_pic.Image;
-                compare_pic.Image = null;
-                tmp.Dispose();
-
-                lock (thisLock)
-                {
-                    delReserved = filteredComparions[currentIdx];
-                }
-
-                filteredOriginals.RemoveAt(currentIdx);
-                filteredComparions.RemoveAt(currentIdx);
-
-                if (filteredComparions.Count <= 0)
-                {
-                    originalImgs = null;
-                    comparisonImgs = null;
-                    filteredOriginals = null;
-                    filteredComparions = null;
-                    currentIdx = -1;
-                    tagDic = null;
-
-                    original_pic.Image = null;
-                    compare_pic.Image = null;
-                    return;
-                }
-
-                showImage(currentIdx);
+                deleteImg();
             }
+        }
+
+        private void deleteImg()
+        {
+            var tmp = compare_pic.Image;
+            if (tmp == null)
+                return;
+
+            compare_pic.Image = null;
+            tmp.Dispose();
+
+            lock (thisLock)
+            {
+                delReserved = filteredComparions[currentIdx];
+            }
+
+            filteredOriginals.RemoveAt(currentIdx);
+            filteredComparions.RemoveAt(currentIdx);
+
+            if (filteredComparions.Count <= 0)
+            {
+                originalImgs = null;
+                comparisonImgs = null;
+                filteredOriginals = null;
+                filteredComparions = null;
+                currentIdx = -1;
+                tagDic = null;
+
+                original_pic.Image = null;
+                compare_pic.Image = null;
+                return;
+            }
+
+            showImage(currentIdx);
         }
 
         private void orginal_img_txt_folder_DragDrop(object sender, DragEventArgs e)
@@ -346,10 +355,13 @@ namespace WindowsFormsApplication5
 
         private void quick_tag(MouseEventArgs e)
         {
+            if (freq_tag_box.SelectedItem == null)
+                return;
+
             var selectedItem = freq_tag_box.SelectedItem.ToString();
             bool add = (e.Button == MouseButtons.Left); // Set to 'true' for addition, 'false' for subtraction
 
-            if (freq_tag_box.SelectedItem != null && tag_box.Text != string.Empty)
+            if (tag_box.Text != string.Empty)
             {
                 char[] separator = { ',' };
 
@@ -387,7 +399,14 @@ namespace WindowsFormsApplication5
                     }
                 }
 
-                if (e.Button == MouseButtons.Middle)
+                // Do not anything if there's no matched tag.
+                if (updatedItem == null && e.Button == MouseButtons.Middle)
+                {
+                    return;
+                }
+
+                // If matched tag exist. Delete it.
+                if (updatedItem != null && e.Button == MouseButtons.Middle)
                 {
                     parts.RemoveAt(matchedIndex);
                 }
@@ -410,6 +429,49 @@ namespace WindowsFormsApplication5
         }
 
         private void freq_tag_box_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+            {
+                quick_tag(e);
+            }
+            
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            if (freq_tag_box.Focused)
+                return;
+
+            if (e.Delta > 0)
+            {
+                flipToPrevImg();
+            }
+            else if (e.Delta < 0)
+            {
+                flipToNextImg();
+            }
+        }
+
+        protected void flipToPrevImg()
+        {
+            if (currentIdx >= 1)
+            {
+                this.currentIdx--;
+                showImage(this.currentIdx);
+            }
+        }
+        protected void flipToNextImg()
+        {
+            if (currentIdx < this.filteredOriginals.Count - 1)
+            {
+                this.currentIdx++;
+                showImage(this.currentIdx);
+            }
+        }
+
+        private void freq_tag_box_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             quick_tag(e);
         }

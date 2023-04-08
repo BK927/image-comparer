@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApplication5
+﻿namespace ImageComparer
 {
     partial class Form1
     {
@@ -345,6 +345,7 @@
             this.freq_tag_box.Name = "freq_tag_box";
             this.freq_tag_box.Size = new System.Drawing.Size(145, 184);
             this.freq_tag_box.TabIndex = 0;
+            this.freq_tag_box.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.freq_tag_box_MouseDoubleClick);
             this.freq_tag_box.MouseUp += new System.Windows.Forms.MouseEventHandler(this.freq_tag_box_MouseUp);
             // 
             // Form1
