@@ -43,12 +43,11 @@
             this.compare_label = new System.Windows.Forms.Label();
             this.compare_txt_folder = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.save_btn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.tag_box = new System.Windows.Forms.TextBox();
             this.panel4 = new System.Windows.Forms.Panel();
             this.add_tag_box = new System.Windows.Forms.TextBox();
             this.quick_tag_box = new System.Windows.Forms.ListBox();
+            this.tagLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.ui_main.SuspendLayout();
             this.uiTlp_Sub.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.original_pic)).BeginInit();
@@ -73,9 +72,8 @@
             this.ui_main.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ui_main.Name = "ui_main";
             this.ui_main.RowCount = 2;
-            this.ui_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 230F));
+            this.ui_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 280F));
             this.ui_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ui_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.ui_main.Size = new System.Drawing.Size(1059, 778);
             this.ui_main.TabIndex = 0;
             // 
@@ -89,13 +87,13 @@
             this.uiTlp_Sub.Controls.Add(this.original_pic, 0, 0);
             this.uiTlp_Sub.Controls.Add(this.compare_pic, 1, 0);
             this.uiTlp_Sub.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTlp_Sub.Location = new System.Drawing.Point(3, 234);
+            this.uiTlp_Sub.Location = new System.Drawing.Point(3, 284);
             this.uiTlp_Sub.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.uiTlp_Sub.Name = "uiTlp_Sub";
             this.uiTlp_Sub.Padding = new System.Windows.Forms.Padding(5);
             this.uiTlp_Sub.RowCount = 1;
             this.uiTlp_Sub.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTlp_Sub.Size = new System.Drawing.Size(1053, 540);
+            this.uiTlp_Sub.Size = new System.Drawing.Size(1053, 490);
             this.uiTlp_Sub.TabIndex = 3;
             // 
             // original_pic
@@ -105,7 +103,7 @@
             this.original_pic.Location = new System.Drawing.Point(8, 9);
             this.original_pic.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.original_pic.Name = "original_pic";
-            this.original_pic.Size = new System.Drawing.Size(515, 522);
+            this.original_pic.Size = new System.Drawing.Size(515, 472);
             this.original_pic.TabIndex = 1;
             this.original_pic.TabStop = false;
             // 
@@ -115,7 +113,7 @@
             this.compare_pic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.compare_pic.Location = new System.Drawing.Point(529, 8);
             this.compare_pic.Name = "compare_pic";
-            this.compare_pic.Size = new System.Drawing.Size(516, 524);
+            this.compare_pic.Size = new System.Drawing.Size(516, 474);
             this.compare_pic.TabIndex = 2;
             this.compare_pic.TabStop = false;
             this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
@@ -134,7 +132,7 @@
             this.header_panel.Name = "header_panel";
             this.header_panel.RowCount = 1;
             this.header_panel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.header_panel.Size = new System.Drawing.Size(1053, 224);
+            this.header_panel.Size = new System.Drawing.Size(1053, 274);
             this.header_panel.TabIndex = 6;
             // 
             // tableLayoutPanel2
@@ -152,8 +150,8 @@
             this.tableLayoutPanel2.RowCount = 3;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(887, 218);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 140F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(887, 268);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // panel2
@@ -266,25 +264,12 @@
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel3.Controls.Add(this.save_btn);
+            this.panel3.Controls.Add(this.tagLayoutPanel);
             this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.tag_box);
             this.panel3.Location = new System.Drawing.Point(3, 113);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(881, 104);
+            this.panel3.Size = new System.Drawing.Size(881, 152);
             this.panel3.TabIndex = 2;
-            // 
-            // save_btn
-            // 
-            this.save_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.save_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.save_btn.Location = new System.Drawing.Point(796, 3);
-            this.save_btn.Name = "save_btn";
-            this.save_btn.Size = new System.Drawing.Size(82, 98);
-            this.save_btn.TabIndex = 2;
-            this.save_btn.Text = "save";
-            this.save_btn.UseVisualStyleBackColor = true;
-            this.save_btn.Click += new System.EventHandler(this.save_btn_Click);
             // 
             // label2
             // 
@@ -292,25 +277,11 @@
             this.label2.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.LiveSetting = System.Windows.Forms.Automation.AutomationLiveSetting.Polite;
-            this.label2.Location = new System.Drawing.Point(61, 41);
+            this.label2.Location = new System.Drawing.Point(59, 61);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(50, 23);
             this.label2.TabIndex = 0;
             this.label2.Text = "Tags";
-            // 
-            // tag_box
-            // 
-            this.tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tag_box.Enabled = false;
-            this.tag_box.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tag_box.HideSelection = false;
-            this.tag_box.Location = new System.Drawing.Point(181, 3);
-            this.tag_box.Multiline = true;
-            this.tag_box.Name = "tag_box";
-            this.tag_box.Size = new System.Drawing.Size(609, 98);
-            this.tag_box.TabIndex = 1;
-            this.tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tag_box_KeyPress);
             // 
             // panel4
             // 
@@ -321,14 +292,14 @@
             this.panel4.Controls.Add(this.quick_tag_box);
             this.panel4.Location = new System.Drawing.Point(896, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(154, 218);
+            this.panel4.Size = new System.Drawing.Size(154, 268);
             this.panel4.TabIndex = 1;
             // 
             // add_tag_box
             // 
             this.add_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.add_tag_box.Location = new System.Drawing.Point(3, 189);
+            this.add_tag_box.Location = new System.Drawing.Point(3, 239);
             this.add_tag_box.Name = "add_tag_box";
             this.add_tag_box.Size = new System.Drawing.Size(145, 25);
             this.add_tag_box.TabIndex = 1;
@@ -341,12 +312,22 @@
             this.quick_tag_box.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.quick_tag_box.FormattingEnabled = true;
             this.quick_tag_box.ItemHeight = 20;
-            this.quick_tag_box.Location = new System.Drawing.Point(4, 0);
+            this.quick_tag_box.Location = new System.Drawing.Point(4, 3);
             this.quick_tag_box.Name = "quick_tag_box";
-            this.quick_tag_box.Size = new System.Drawing.Size(145, 184);
+            this.quick_tag_box.Size = new System.Drawing.Size(145, 224);
             this.quick_tag_box.TabIndex = 0;
             this.quick_tag_box.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseDoubleClick);
             this.quick_tag_box.MouseUp += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseUp);
+            // 
+            // tagLayoutPanel
+            // 
+            this.tagLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tagLayoutPanel.Location = new System.Drawing.Point(181, 3);
+            this.tagLayoutPanel.Name = "tagLayoutPanel";
+            this.tagLayoutPanel.Size = new System.Drawing.Size(696, 146);
+            this.tagLayoutPanel.TabIndex = 1;
             // 
             // Form1
             // 
@@ -390,9 +371,7 @@
         private System.Windows.Forms.TextBox compare_txt_folder;
         private System.Windows.Forms.Label compare_label;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tag_box;
         private System.Windows.Forms.Button original_img_btn;
-        private System.Windows.Forms.Button save_btn;
         private System.Windows.Forms.TableLayoutPanel header_panel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Panel panel2;
@@ -401,6 +380,7 @@
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.TextBox add_tag_box;
         private System.Windows.Forms.ListBox quick_tag_box;
+        private System.Windows.Forms.FlowLayoutPanel tagLayoutPanel;
     }
 }
 

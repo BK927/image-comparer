@@ -4,13 +4,8 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using Microsoft.VisualBasic.FileIO;
-using static System.Net.WebRequestMethods;
-using System.Globalization;
-using static System.Net.Mime.MediaTypeNames;
-using System.Collections;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 
 namespace ImageComparer
@@ -23,7 +18,8 @@ namespace ImageComparer
         List<string> filteredComparions = null;
         HashSet<string> tagDic = null;
         string delReserved = null;
-        const string TAG_PATH = "tag.dat";
+        const string TAG_FILE_PATH = "tag.dat";
+        const string TAG_PATTERN = @"\(([^\(\):]+):([\d.]+)\)|([^\(\):]+)";
 
         int currentIdx = -1;
 
@@ -34,18 +30,25 @@ namespace ImageComparer
         public Form1()
         {
             InitializeComponent();
+            // redraw quick_tag_box whenever tagLayoutPanel changed
+            InitializeTagLayout();
 
+            // Middle button delete
             MiddleMouseMessageFilter messageFilter = new MiddleMouseMessageFilter(quick_tag_box);
             messageFilter.MiddleMouseClick += MessageFilter_MiddleMouseClick;
             System.Windows.Forms.Application.AddMessageFilter(messageFilter);
 
+            // ListBox coloring
+            quick_tag_box.DrawMode = DrawMode.OwnerDrawFixed;
+            quick_tag_box.DrawItem += quick_taglist_DrawItem;
+
+
             this.original_img_btn.Click += Original_Img_Btn_Click;
             this.initialTitle = this.Text;
-            tag_box.Text = string.Empty;
 
-            if (System.IO.File.Exists(TAG_PATH))
+            if (System.IO.File.Exists(TAG_FILE_PATH))
             {
-                string text = System.IO.File.ReadAllText(TAG_PATH);
+                string text = System.IO.File.ReadAllText(TAG_FILE_PATH);
 
                 char[] separator = { ',' };
 
@@ -59,6 +62,31 @@ namespace ImageComparer
                     quick_tag_box.Items.Add(parts[i]);
                 }
             }
+        }
+
+        private void InitializeTagLayout()
+        {
+            FlowLayoutPanel originalFlowLayoutPanel = tagLayoutPanel;
+
+            // Create a new instance of CustomFlowLayoutPanel
+            TagFlowLayoutPanel customFlowLayoutPanel = new TagFlowLayoutPanel();
+
+            // Set the properties of the CustomFlowLayoutPanel to match the original FlowLayoutPanel
+            customFlowLayoutPanel.Location = originalFlowLayoutPanel.Location;
+            customFlowLayoutPanel.Size = originalFlowLayoutPanel.Size;
+            customFlowLayoutPanel.Anchor = originalFlowLayoutPanel.Anchor;
+            customFlowLayoutPanel.Dock = originalFlowLayoutPanel.Dock;
+            customFlowLayoutPanel.ChildTextChanged += InvalidateQuickTagBox;
+
+            // Add any child controls from the original FlowLayoutPanel to the CustomFlowLayoutPanel
+            foreach (Control control in originalFlowLayoutPanel.Controls)
+            {
+                customFlowLayoutPanel.Controls.Add(control);
+            }
+
+            // Replace the original FlowLayoutPanel with the CustomFlowLayoutPanel on the form
+            this.Controls.Remove(originalFlowLayoutPanel);
+            this.Controls.Add(customFlowLayoutPanel);
         }
 
         private void MessageFilter_MiddleMouseClick(object sender, MouseEventArgs e)
@@ -106,7 +134,7 @@ namespace ImageComparer
             return baseNames.ToHashSet();
         }
 
-        private string getTag(string path)
+        private string getTagFile(string path)
         {
             if (tagDic == null)
                 return null;
@@ -132,17 +160,12 @@ namespace ImageComparer
             original_pic.SizeMode = PictureBoxSizeMode.Zoom;
             compare_pic.LoadAsync(this.filteredComparions[idx]);
             compare_pic.SizeMode = PictureBoxSizeMode.Zoom;
-            var tagPath = getTag(this.filteredOriginals[idx]);
+            var tagPath = getTagFile(this.filteredOriginals[idx]);
 
             if (tagPath != null)
             {
-                tag_box.Text = System.IO.File.ReadAllText(tagPath);
-                tag_box.Enabled = true;
-            }
-            else
-            {
-                tag_box.Text = null;
-                tag_box.Enabled = false;
+                var tags = splitTagsToList(System.IO.File.ReadAllText(tagPath));
+                update_tags(tags);
             }
 
             this.Text = $"{initialTitle} - {this.filteredComparions[idx]}({(idx+1).ToString()}/{this.filteredOriginals.Count.ToString()})";
@@ -182,7 +205,7 @@ namespace ImageComparer
             }
 
             // Doesn't work on editing tag.
-            if (tag_box.Focused  || add_tag_box.Focused || quick_tag_box.Focused)
+            if (add_tag_box.Focused || quick_tag_box.Focused)
                 return;
 
             if (e.KeyCode == Keys.Left)
@@ -301,39 +324,22 @@ namespace ImageComparer
             }
         }
 
-        private void save_btn_Click(object sender, EventArgs e)
-        {
-            saveTags();
-            MessageBox.Show("Successfully saved");
-        }
-
         private void saveTags()
         {
             if (filteredOriginals != null)
             {
-                using (StreamWriter outputFile = new StreamWriter(getTag(this.filteredOriginals[currentIdx]), false))
+                using (StreamWriter outputFile = new StreamWriter(getTagFile(this.filteredOriginals[currentIdx]), false))
                 {
-                    outputFile.Write(tag_box.Text);
+                    string text = string.Join(", ", tagLayoutPanel.Controls.OfType<Button>().Select(button => button.Text));
+                    outputFile.Write(text);
                 }
-            }
-        }
-
-        private void tag_box_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)Keys.Enter)
-            {
-                // Suppress the newline character
-                e.Handled = true;
-
-                saveTags();
-                MessageBox.Show("Successfully saved");
             }
         }
 
         private void save_quick_tags()
         {
             var itmes = string.Join(", ", quick_tag_box.Items.OfType<string>());
-            using (StreamWriter tagFile = new StreamWriter(TAG_PATH))
+            using (StreamWriter tagFile = new StreamWriter(TAG_FILE_PATH))
             {
                 tagFile.Write(itmes);
             }
@@ -353,7 +359,7 @@ namespace ImageComparer
             }
         }
 
-        private void quick_tag(MouseEventArgs e)
+        private void quick_tag_click(MouseEventArgs e)
         {
             if (quick_tag_box.SelectedItem == null)
                 return;
@@ -361,25 +367,21 @@ namespace ImageComparer
             var selectedItem = quick_tag_box.SelectedItem.ToString();
             bool add = (e.Button == MouseButtons.Left); // Set to 'true' for addition, 'false' for subtraction
 
-            if (tag_box.Text != string.Empty)
+            if (tagLayoutPanel.Controls.Count > 0)
             {
                 char[] separator = { ',' };
 
                 // Split the string by commas
-                var parts = tag_box.Text.Split(separator, StringSplitOptions.RemoveEmptyEntries)
-                          .Select(part => part.Trim())
-                          .ToList();
-
-                string pattern = @"\(([^\(\):]+):([\d.]+)\)|([^\(\):]+)";
+                var parts = tagLayoutPanel.Controls.OfType<Button>().Select(button => button.Text).ToList();
 
                 string updatedItem = null;
 
                 int matchedIndex = -1;
 
-                for (int i = 0; i < parts.Count; i++)
+                for (int i = 0; i < tagLayoutPanel.Controls.Count; i++)
                 {
                     string item = parts[i];
-                    Match match = Regex.Match(item, pattern);
+                    Match match = Regex.Match(item, TAG_PATTERN);
                     string tag = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[3].Value;
                     string weight = match.Groups[2].Value;
 
@@ -392,7 +394,7 @@ namespace ImageComparer
                         else
                         {
                             double newWeight = add ? double.Parse(weight) + 0.1 : double.Parse(weight) - 0.1;
-                            updatedItem = $"({tag}:{newWeight})";
+                            updatedItem = newWeight == 1.0 ? tag : $"({tag}:{newWeight})";
                         }
                         matchedIndex = i;
                         break;
@@ -422,9 +424,8 @@ namespace ImageComparer
                         parts.Insert(middleIndex, selectedItem);
                     }
                 }
-                
-                tag_box.Text = string.Join(", ", parts);
-                saveTags();
+
+                update_tags(parts);
             }
         }
 
@@ -432,7 +433,7 @@ namespace ImageComparer
         {
             if (e.Button != MouseButtons.Left)
             {
-                quick_tag(e);
+                quick_tag_click(e);
             }
             
         }
@@ -473,7 +474,109 @@ namespace ImageComparer
 
         private void quick_tag_box_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            quick_tag(e);
+            quick_tag_click(e);
+        }
+
+        private void quick_taglist_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            ListBox listBox = (ListBox)sender;
+            var tags = getTags();
+
+            // Change the background color based on the item index, state or other conditions
+            Color backgroundColor;
+            if (tags.Contains(quick_tag_box.Items[e.Index].ToString()))
+            {
+                backgroundColor = Color.LightBlue;
+            }
+            else
+            {
+                backgroundColor = (e.State & DrawItemState.Selected) == DrawItemState.Selected ? SystemColors.Highlight : SystemColors.Window;
+            }
+            using (SolidBrush backgroundBrush = new SolidBrush(backgroundColor))
+            {
+                e.Graphics.FillRectangle(backgroundBrush, e.Bounds);
+            }
+
+            Brush textColor = (e.State & DrawItemState.Selected) == DrawItemState.Selected ? SystemBrushes.HighlightText : SystemBrushes.ControlText;
+            string itemText = listBox.Items[e.Index].ToString();
+            e.Graphics.DrawString(itemText, e.Font, textColor, e.Bounds, StringFormat.GenericDefault);
+
+            e.DrawFocusRectangle();
+        }
+
+        private List<string> splitTagsToList(string text)
+        {
+            char[] separator = { ',' };
+
+            return text.Split(separator, StringSplitOptions.RemoveEmptyEntries)
+                          .Select(part => part.Trim())
+                          .ToList();
+        }
+
+        private void update_tags(List<string> list)
+        {
+            tagLayoutPanel.Controls.Clear();
+            foreach (string tag in list)
+            {
+                var btn = new Button();
+                btn.Text = tag;
+                btn.AutoSize = true;
+                btn.Click += tagBtn_Click;
+                // Set the btn's text color
+                btn.ForeColor = Color.FromArgb(255, 255, 255); // White
+
+                // Set the btn's background color
+                btn.BackColor = Color.FromArgb(26, 115, 232); // Blue
+
+                // Set the btn's font size and style
+                btn.Font = new Font(btn.Font.FontFamily, 12, FontStyle.Bold);
+
+                // Add a border to the btn
+                btn.FlatStyle = FlatStyle.Flat;
+                btn.FlatAppearance.BorderSize = 2;
+                btn.FlatAppearance.BorderColor = Color.FromArgb(255, 255, 255); // White
+
+                // Add a hover effect to change the btn's background color
+                btn.MouseEnter += (sender, e) =>
+                {
+                    ((Button)sender).BackColor = Color.FromArgb(15, 84, 193); // Darker Blue
+                };
+                btn.MouseLeave += (sender, e) =>
+                {
+                    ((Button)sender).BackColor = Color.FromArgb(26, 115, 232); // Original Blue
+                };
+
+
+                tagLayoutPanel.Controls.Add(btn);
+            }
+
+            // Auto save to tag.Dat
+            saveTags();
+        }
+
+        private void tagBtn_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            if (btn != null)
+            {
+                tagLayoutPanel.Controls.Remove(btn);
+                btn.Dispose();
+            }
+
+            // Auto save to tag.Dat
+            saveTags();
+        }
+
+        private List<string> getTags()
+        {
+            return tagLayoutPanel.Controls.OfType<Button>().Select(button => button.Text).ToList();
+        }
+
+        private void InvalidateQuickTagBox(object sender, EventArgs e)
+        {
+            quick_tag_box.Invalidate();
         }
     }
 }
