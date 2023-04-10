@@ -379,7 +379,8 @@ namespace ImageComparer
 
                 int matchedIndex = -1;
 
-                for (int i = 0; i < tagLayoutPanel.Controls.Count; i++)
+
+                for (int i = 0; i < parts.Count; i++)
                 {
                     string item = parts[i];
                     Match match = Regex.Match(item, TAG_PATTERN);
@@ -536,8 +537,8 @@ namespace ImageComparer
                 btn.Font = new Font(btn.Font.FontFamily, 12, FontStyle.Bold);
 
                 // Add a border to the btn
-                btn.FlatStyle = FlatStyle.Flat;
-                btn.FlatAppearance.BorderSize = 2;
+                //btn.FlatStyle = FlatStyle.Flat;
+                //btn.FlatAppearance.BorderSize = 2;
                 btn.FlatAppearance.BorderColor = Color.FromArgb(255, 255, 255); // White
 
                 // Add a hover effect to change the btn's background color

@@ -44,11 +44,11 @@
             this.compare_txt_folder = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tagLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.add_tag_box = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
             this.add_quick_tag_box = new System.Windows.Forms.TextBox();
             this.quick_tag_box = new System.Windows.Forms.ListBox();
-            this.add_tag_box = new System.Windows.Forms.TextBox();
             this.ui_main.SuspendLayout();
             this.uiTlp_Sub.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.original_pic)).BeginInit();
@@ -279,10 +279,19 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tagLayoutPanel.Controls.Add(this.add_tag_box);
-            this.tagLayoutPanel.Location = new System.Drawing.Point(181, 3);
+            this.tagLayoutPanel.Location = new System.Drawing.Point(94, 3);
             this.tagLayoutPanel.Name = "tagLayoutPanel";
-            this.tagLayoutPanel.Size = new System.Drawing.Size(696, 146);
+            this.tagLayoutPanel.Size = new System.Drawing.Size(783, 146);
             this.tagLayoutPanel.TabIndex = 1;
+            // 
+            // add_tag_box
+            // 
+            this.add_tag_box.Location = new System.Drawing.Point(3, 3);
+            this.add_tag_box.Name = "add_tag_box";
+            this.add_tag_box.Size = new System.Drawing.Size(89, 25);
+            this.add_tag_box.TabIndex = 0;
+            this.add_tag_box.WordWrap = false;
+            this.add_tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.add_tag_box_KeyPress);
             // 
             // label2
             // 
@@ -290,7 +299,7 @@
             this.label2.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.LiveSetting = System.Windows.Forms.Automation.AutomationLiveSetting.Polite;
-            this.label2.Location = new System.Drawing.Point(59, 61);
+            this.label2.Location = new System.Drawing.Point(23, 66);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(50, 23);
             this.label2.TabIndex = 0;
@@ -331,15 +340,6 @@
             this.quick_tag_box.TabIndex = 0;
             this.quick_tag_box.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseDoubleClick);
             this.quick_tag_box.MouseUp += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseUp);
-            // 
-            // add_tag_box
-            // 
-            this.add_tag_box.Location = new System.Drawing.Point(3, 3);
-            this.add_tag_box.Name = "add_tag_box";
-            this.add_tag_box.Size = new System.Drawing.Size(89, 25);
-            this.add_tag_box.TabIndex = 0;
-            this.add_tag_box.WordWrap = false;
-            this.add_tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.add_tag_box_KeyPress);
             // 
             // Form1
             // 
