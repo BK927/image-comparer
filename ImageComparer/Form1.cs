@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -205,7 +206,7 @@ namespace ImageComparer
             }
 
             // Doesn't work on editing tag.
-            if (add_tag_box.Focused || quick_tag_box.Focused)
+            if (add_quick_tag_box.Focused || quick_tag_box.Focused || add_tag_box.Focused)
                 return;
 
             if (e.KeyCode == Keys.Left)
@@ -345,15 +346,15 @@ namespace ImageComparer
             }
         }
 
-        private void add_tag_box_KeyPress(object sender, KeyPressEventArgs e)
+        private void add_quick_tag_box_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
             {
                 // Suppress the newline character
                 e.Handled = true;
 
-                quick_tag_box.Items.Add(add_tag_box.Text);
-                add_tag_box.Text = string.Empty;
+                quick_tag_box.Items.Add(add_quick_tag_box.Text);
+                add_quick_tag_box.Text = string.Empty;
 
                 save_quick_tags();
             }
@@ -517,6 +518,7 @@ namespace ImageComparer
 
         private void update_tags(List<string> list)
         {
+            var tagBox = add_tag_box;
             tagLayoutPanel.Controls.Clear();
             foreach (string tag in list)
             {
@@ -551,6 +553,7 @@ namespace ImageComparer
 
                 tagLayoutPanel.Controls.Add(btn);
             }
+            tagLayoutPanel.Controls.Add(tagBox);
 
             // Auto save to tag.Dat
             saveTags();
@@ -577,6 +580,26 @@ namespace ImageComparer
         private void InvalidateQuickTagBox(object sender, EventArgs e)
         {
             quick_tag_box.Invalidate();
+        }
+
+        private void add_tag_box_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter && (add_tag_box.Text != null || add_tag_box.Text != ""))
+            {
+                // Suppress the newline character
+                e.Handled = true;
+
+                var tags = getTags();
+
+                if (tags.Contains(add_tag_box.Text))
+                    return;
+
+                // Insert a new tag in the middle of the list
+                int middleIndex = tags.Count / 2;
+                tags.Insert(middleIndex, add_tag_box.Text);
+                update_tags(tags);
+                add_tag_box.Text = null;
+            }
         }
     }
 }

@@ -43,11 +43,12 @@
             this.compare_label = new System.Windows.Forms.Label();
             this.compare_txt_folder = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.tagLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
-            this.add_tag_box = new System.Windows.Forms.TextBox();
+            this.add_quick_tag_box = new System.Windows.Forms.TextBox();
             this.quick_tag_box = new System.Windows.Forms.ListBox();
-            this.tagLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.add_tag_box = new System.Windows.Forms.TextBox();
             this.ui_main.SuspendLayout();
             this.uiTlp_Sub.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.original_pic)).BeginInit();
@@ -57,6 +58,7 @@
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.tagLayoutPanel.SuspendLayout();
             this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -271,6 +273,17 @@
             this.panel3.Size = new System.Drawing.Size(881, 152);
             this.panel3.TabIndex = 2;
             // 
+            // tagLayoutPanel
+            // 
+            this.tagLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tagLayoutPanel.Controls.Add(this.add_tag_box);
+            this.tagLayoutPanel.Location = new System.Drawing.Point(181, 3);
+            this.tagLayoutPanel.Name = "tagLayoutPanel";
+            this.tagLayoutPanel.Size = new System.Drawing.Size(696, 146);
+            this.tagLayoutPanel.TabIndex = 1;
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -288,22 +301,22 @@
             this.panel4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel4.Controls.Add(this.add_tag_box);
+            this.panel4.Controls.Add(this.add_quick_tag_box);
             this.panel4.Controls.Add(this.quick_tag_box);
             this.panel4.Location = new System.Drawing.Point(896, 3);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(154, 268);
             this.panel4.TabIndex = 1;
             // 
-            // add_tag_box
+            // add_quick_tag_box
             // 
-            this.add_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.add_quick_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.add_tag_box.Location = new System.Drawing.Point(3, 239);
-            this.add_tag_box.Name = "add_tag_box";
-            this.add_tag_box.Size = new System.Drawing.Size(145, 25);
-            this.add_tag_box.TabIndex = 1;
-            this.add_tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.add_tag_box_KeyPress);
+            this.add_quick_tag_box.Location = new System.Drawing.Point(3, 239);
+            this.add_quick_tag_box.Name = "add_quick_tag_box";
+            this.add_quick_tag_box.Size = new System.Drawing.Size(145, 25);
+            this.add_quick_tag_box.TabIndex = 1;
+            this.add_quick_tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.add_quick_tag_box_KeyPress);
             // 
             // quick_tag_box
             // 
@@ -319,15 +332,14 @@
             this.quick_tag_box.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseDoubleClick);
             this.quick_tag_box.MouseUp += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseUp);
             // 
-            // tagLayoutPanel
+            // add_tag_box
             // 
-            this.tagLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tagLayoutPanel.Location = new System.Drawing.Point(181, 3);
-            this.tagLayoutPanel.Name = "tagLayoutPanel";
-            this.tagLayoutPanel.Size = new System.Drawing.Size(696, 146);
-            this.tagLayoutPanel.TabIndex = 1;
+            this.add_tag_box.Location = new System.Drawing.Point(3, 3);
+            this.add_tag_box.Name = "add_tag_box";
+            this.add_tag_box.Size = new System.Drawing.Size(89, 25);
+            this.add_tag_box.TabIndex = 0;
+            this.add_tag_box.WordWrap = false;
+            this.add_tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.add_tag_box_KeyPress);
             // 
             // Form1
             // 
@@ -353,6 +365,8 @@
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.tagLayoutPanel.ResumeLayout(false);
+            this.tagLayoutPanel.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.ResumeLayout(false);
@@ -378,9 +392,10 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.TextBox add_tag_box;
+        private System.Windows.Forms.TextBox add_quick_tag_box;
         private System.Windows.Forms.ListBox quick_tag_box;
         private System.Windows.Forms.FlowLayoutPanel tagLayoutPanel;
+        private System.Windows.Forms.TextBox add_tag_box;
     }
 }
 
