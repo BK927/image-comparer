@@ -29,9 +29,6 @@
         private void InitializeComponent()
         {
             this.ui_main = new System.Windows.Forms.TableLayoutPanel();
-            this.uiTlp_Sub = new System.Windows.Forms.TableLayoutPanel();
-            this.original_pic = new System.Windows.Forms.PictureBox();
-            this.compare_pic = new System.Windows.Forms.PictureBox();
             this.header_panel = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -49,10 +46,10 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.add_quick_tag_box = new System.Windows.Forms.TextBox();
             this.quick_tag_box = new System.Windows.Forms.ListBox();
+            this.uiTlp_Sub = new System.Windows.Forms.TableLayoutPanel();
+            this.original_pic = new System.Windows.Forms.PictureBox();
+            this.compare_pic = new System.Windows.Forms.PictureBox();
             this.ui_main.SuspendLayout();
-            this.uiTlp_Sub.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.original_pic)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).BeginInit();
             this.header_panel.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -60,83 +57,42 @@
             this.panel3.SuspendLayout();
             this.tagLayoutPanel.SuspendLayout();
             this.panel4.SuspendLayout();
+            this.uiTlp_Sub.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.original_pic)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).BeginInit();
             this.SuspendLayout();
             // 
             // ui_main
             // 
             this.ui_main.BackColor = System.Drawing.Color.Gray;
-            this.ui_main.ColumnCount = 1;
+            this.ui_main.ColumnCount = 2;
             this.ui_main.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ui_main.Controls.Add(this.uiTlp_Sub, 0, 1);
+            this.ui_main.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 190F));
+            this.ui_main.Controls.Add(this.panel4, 1, 0);
             this.ui_main.Controls.Add(this.header_panel, 0, 0);
             this.ui_main.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ui_main.Location = new System.Drawing.Point(0, 0);
             this.ui_main.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ui_main.Name = "ui_main";
-            this.ui_main.RowCount = 2;
-            this.ui_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 280F));
+            this.ui_main.RowCount = 1;
             this.ui_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ui_main.Size = new System.Drawing.Size(1059, 778);
+            this.ui_main.Size = new System.Drawing.Size(1014, 778);
             this.ui_main.TabIndex = 0;
-            // 
-            // uiTlp_Sub
-            // 
-            this.uiTlp_Sub.BackColor = System.Drawing.Color.Gray;
-            this.uiTlp_Sub.ColumnCount = 2;
-            this.uiTlp_Sub.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTlp_Sub.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTlp_Sub.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.uiTlp_Sub.Controls.Add(this.original_pic, 0, 0);
-            this.uiTlp_Sub.Controls.Add(this.compare_pic, 1, 0);
-            this.uiTlp_Sub.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTlp_Sub.Location = new System.Drawing.Point(3, 284);
-            this.uiTlp_Sub.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.uiTlp_Sub.Name = "uiTlp_Sub";
-            this.uiTlp_Sub.Padding = new System.Windows.Forms.Padding(5);
-            this.uiTlp_Sub.RowCount = 1;
-            this.uiTlp_Sub.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTlp_Sub.Size = new System.Drawing.Size(1053, 490);
-            this.uiTlp_Sub.TabIndex = 3;
-            // 
-            // original_pic
-            // 
-            this.original_pic.BackColor = System.Drawing.Color.DimGray;
-            this.original_pic.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.original_pic.Location = new System.Drawing.Point(8, 9);
-            this.original_pic.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.original_pic.Name = "original_pic";
-            this.original_pic.Size = new System.Drawing.Size(515, 472);
-            this.original_pic.TabIndex = 1;
-            this.original_pic.TabStop = false;
-            this.original_pic.Paint += new System.Windows.Forms.PaintEventHandler(this.original_pic_Paint);
-            // 
-            // compare_pic
-            // 
-            this.compare_pic.BackColor = System.Drawing.Color.DimGray;
-            this.compare_pic.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.compare_pic.Location = new System.Drawing.Point(529, 8);
-            this.compare_pic.Name = "compare_pic";
-            this.compare_pic.Size = new System.Drawing.Size(516, 474);
-            this.compare_pic.TabIndex = 2;
-            this.compare_pic.TabStop = false;
-            this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
-            this.compare_pic.Paint += new System.Windows.Forms.PaintEventHandler(this.compare_pic_Paint);
             // 
             // header_panel
             // 
             this.header_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.header_panel.ColumnCount = 2;
+            this.header_panel.ColumnCount = 1;
             this.header_panel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.header_panel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
+            this.header_panel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.header_panel.Controls.Add(this.tableLayoutPanel2, 0, 0);
-            this.header_panel.Controls.Add(this.panel4, 1, 0);
             this.header_panel.Location = new System.Drawing.Point(3, 3);
             this.header_panel.Name = "header_panel";
             this.header_panel.RowCount = 1;
             this.header_panel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.header_panel.Size = new System.Drawing.Size(1053, 274);
+            this.header_panel.Size = new System.Drawing.Size(818, 772);
             this.header_panel.TabIndex = 6;
             // 
             // tableLayoutPanel2
@@ -146,16 +102,18 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this.uiTlp_Sub, 0, 3);
             this.tableLayoutPanel2.Controls.Add(this.panel2, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.panel1, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.panel3, 0, 2);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 3;
+            this.tableLayoutPanel2.RowCount = 4;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 140F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(887, 268);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(812, 766);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // panel2
@@ -168,7 +126,7 @@
             this.panel2.Controls.Add(this.orginal_img_txt_folder);
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(881, 49);
+            this.panel2.Size = new System.Drawing.Size(806, 49);
             this.panel2.TabIndex = 0;
             // 
             // original_img_btn
@@ -177,7 +135,7 @@
             this.original_img_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.original_img_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.original_img_btn.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.original_img_btn.Location = new System.Drawing.Point(796, 4);
+            this.original_img_btn.Location = new System.Drawing.Point(721, 4);
             this.original_img_btn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.original_img_btn.Name = "original_img_btn";
             this.original_img_btn.Size = new System.Drawing.Size(82, 39);
@@ -206,7 +164,7 @@
             this.orginal_img_txt_folder.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.orginal_img_txt_folder.Name = "orginal_img_txt_folder";
             this.orginal_img_txt_folder.ReadOnly = true;
-            this.orginal_img_txt_folder.Size = new System.Drawing.Size(609, 18);
+            this.orginal_img_txt_folder.Size = new System.Drawing.Size(534, 18);
             this.orginal_img_txt_folder.TabIndex = 3;
             this.orginal_img_txt_folder.TextChanged += new System.EventHandler(this.orginal_img_txt_folder_TextChanged);
             this.orginal_img_txt_folder.DragDrop += new System.Windows.Forms.DragEventHandler(this.orginal_img_txt_folder_DragDrop);
@@ -222,14 +180,14 @@
             this.panel1.Controls.Add(this.compare_txt_folder);
             this.panel1.Location = new System.Drawing.Point(3, 58);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(881, 49);
+            this.panel1.Size = new System.Drawing.Size(806, 49);
             this.panel1.TabIndex = 1;
             // 
             // compare_img_btn
             // 
             this.compare_img_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.compare_img_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.compare_img_btn.Location = new System.Drawing.Point(796, 3);
+            this.compare_img_btn.Location = new System.Drawing.Point(721, 3);
             this.compare_img_btn.Name = "compare_img_btn";
             this.compare_img_btn.Size = new System.Drawing.Size(82, 43);
             this.compare_img_btn.TabIndex = 2;
@@ -257,7 +215,7 @@
             this.compare_txt_folder.Location = new System.Drawing.Point(181, 13);
             this.compare_txt_folder.Name = "compare_txt_folder";
             this.compare_txt_folder.ReadOnly = true;
-            this.compare_txt_folder.Size = new System.Drawing.Size(609, 18);
+            this.compare_txt_folder.Size = new System.Drawing.Size(534, 18);
             this.compare_txt_folder.TabIndex = 1;
             this.compare_txt_folder.TextChanged += new System.EventHandler(this.compare_txt_folder_TextChanged);
             this.compare_txt_folder.DragDrop += new System.Windows.Forms.DragEventHandler(this.compare_txt_folder_DragDrop);
@@ -272,7 +230,7 @@
             this.panel3.Controls.Add(this.label2);
             this.panel3.Location = new System.Drawing.Point(3, 113);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(881, 152);
+            this.panel3.Size = new System.Drawing.Size(806, 134);
             this.panel3.TabIndex = 2;
             // 
             // tagLayoutPanel
@@ -283,7 +241,7 @@
             this.tagLayoutPanel.Controls.Add(this.add_tag_box);
             this.tagLayoutPanel.Location = new System.Drawing.Point(94, 3);
             this.tagLayoutPanel.Name = "tagLayoutPanel";
-            this.tagLayoutPanel.Size = new System.Drawing.Size(783, 146);
+            this.tagLayoutPanel.Size = new System.Drawing.Size(708, 128);
             this.tagLayoutPanel.TabIndex = 1;
             // 
             // add_tag_box
@@ -314,42 +272,85 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel4.Controls.Add(this.add_quick_tag_box);
             this.panel4.Controls.Add(this.quick_tag_box);
-            this.panel4.Location = new System.Drawing.Point(896, 3);
+            this.panel4.Location = new System.Drawing.Point(827, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(154, 268);
+            this.panel4.Size = new System.Drawing.Size(184, 772);
             this.panel4.TabIndex = 1;
             // 
             // add_quick_tag_box
             // 
             this.add_quick_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.add_quick_tag_box.Location = new System.Drawing.Point(3, 239);
+            this.add_quick_tag_box.Location = new System.Drawing.Point(3, 738);
             this.add_quick_tag_box.Name = "add_quick_tag_box";
-            this.add_quick_tag_box.Size = new System.Drawing.Size(145, 25);
+            this.add_quick_tag_box.Size = new System.Drawing.Size(175, 25);
             this.add_quick_tag_box.TabIndex = 1;
             this.add_quick_tag_box.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.add_quick_tag_box_KeyPress);
             // 
             // quick_tag_box
             // 
-            this.quick_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.quick_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.quick_tag_box.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.quick_tag_box.FormattingEnabled = true;
             this.quick_tag_box.ItemHeight = 20;
-            this.quick_tag_box.Location = new System.Drawing.Point(4, 3);
+            this.quick_tag_box.Location = new System.Drawing.Point(3, 5);
             this.quick_tag_box.Name = "quick_tag_box";
-            this.quick_tag_box.Size = new System.Drawing.Size(145, 224);
+            this.quick_tag_box.Size = new System.Drawing.Size(175, 724);
             this.quick_tag_box.Sorted = true;
             this.quick_tag_box.TabIndex = 0;
             this.quick_tag_box.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseDoubleClick);
             this.quick_tag_box.MouseUp += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseUp);
+            // 
+            // uiTlp_Sub
+            // 
+            this.uiTlp_Sub.BackColor = System.Drawing.Color.Gray;
+            this.uiTlp_Sub.ColumnCount = 2;
+            this.uiTlp_Sub.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTlp_Sub.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTlp_Sub.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.uiTlp_Sub.Controls.Add(this.original_pic, 0, 0);
+            this.uiTlp_Sub.Controls.Add(this.compare_pic, 1, 0);
+            this.uiTlp_Sub.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTlp_Sub.Location = new System.Drawing.Point(3, 254);
+            this.uiTlp_Sub.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.uiTlp_Sub.Name = "uiTlp_Sub";
+            this.uiTlp_Sub.Padding = new System.Windows.Forms.Padding(5);
+            this.uiTlp_Sub.RowCount = 1;
+            this.uiTlp_Sub.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.uiTlp_Sub.Size = new System.Drawing.Size(806, 508);
+            this.uiTlp_Sub.TabIndex = 4;
+            // 
+            // original_pic
+            // 
+            this.original_pic.BackColor = System.Drawing.Color.DimGray;
+            this.original_pic.BackgroundImage = global::ImageComparer.Properties.Resources.title;
+            this.original_pic.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.original_pic.Location = new System.Drawing.Point(8, 9);
+            this.original_pic.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.original_pic.Name = "original_pic";
+            this.original_pic.Size = new System.Drawing.Size(392, 490);
+            this.original_pic.TabIndex = 1;
+            this.original_pic.TabStop = false;
+            // 
+            // compare_pic
+            // 
+            this.compare_pic.BackColor = System.Drawing.Color.DimGray;
+            this.compare_pic.BackgroundImage = global::ImageComparer.Properties.Resources.title;
+            this.compare_pic.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.compare_pic.Location = new System.Drawing.Point(406, 8);
+            this.compare_pic.Name = "compare_pic";
+            this.compare_pic.Size = new System.Drawing.Size(392, 492);
+            this.compare_pic.TabIndex = 2;
+            this.compare_pic.TabStop = false;
             // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1059, 778);
+            this.ClientSize = new System.Drawing.Size(1014, 778);
             this.Controls.Add(this.ui_main);
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -357,9 +358,6 @@
             this.Text = "Image Comparer";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.ui_main.ResumeLayout(false);
-            this.uiTlp_Sub.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.original_pic)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).EndInit();
             this.header_panel.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
@@ -372,6 +370,9 @@
             this.tagLayoutPanel.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
+            this.uiTlp_Sub.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.original_pic)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.compare_pic)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -381,9 +382,6 @@
         private System.Windows.Forms.TableLayoutPanel ui_main;
         private System.Windows.Forms.Label original_Img_label;
         private System.Windows.Forms.TextBox orginal_img_txt_folder;
-        private System.Windows.Forms.TableLayoutPanel uiTlp_Sub;
-        private System.Windows.Forms.PictureBox original_pic;
-        private System.Windows.Forms.PictureBox compare_pic;
         private System.Windows.Forms.Button compare_img_btn;
         private System.Windows.Forms.TextBox compare_txt_folder;
         private System.Windows.Forms.Label compare_label;
@@ -399,6 +397,9 @@
         private System.Windows.Forms.ListBox quick_tag_box;
         private System.Windows.Forms.FlowLayoutPanel tagLayoutPanel;
         private System.Windows.Forms.TextBox add_tag_box;
+        private System.Windows.Forms.TableLayoutPanel uiTlp_Sub;
+        private System.Windows.Forms.PictureBox original_pic;
+        private System.Windows.Forms.PictureBox compare_pic;
     }
 }
 
