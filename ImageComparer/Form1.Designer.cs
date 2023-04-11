@@ -108,6 +108,7 @@
             this.original_pic.Size = new System.Drawing.Size(515, 472);
             this.original_pic.TabIndex = 1;
             this.original_pic.TabStop = false;
+            this.original_pic.Paint += new System.Windows.Forms.PaintEventHandler(this.original_pic_Paint);
             // 
             // compare_pic
             // 
@@ -119,6 +120,7 @@
             this.compare_pic.TabIndex = 2;
             this.compare_pic.TabStop = false;
             this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
+            this.compare_pic.Paint += new System.Windows.Forms.PaintEventHandler(this.compare_pic_Paint);
             // 
             // header_panel
             // 
@@ -337,6 +339,7 @@
             this.quick_tag_box.Location = new System.Drawing.Point(4, 3);
             this.quick_tag_box.Name = "quick_tag_box";
             this.quick_tag_box.Size = new System.Drawing.Size(145, 224);
+            this.quick_tag_box.Sorted = true;
             this.quick_tag_box.TabIndex = 0;
             this.quick_tag_box.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseDoubleClick);
             this.quick_tag_box.MouseUp += new System.Windows.Forms.MouseEventHandler(this.quick_tag_box_MouseUp);

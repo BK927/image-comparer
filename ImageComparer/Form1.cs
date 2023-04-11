@@ -223,6 +223,8 @@ namespace ImageComparer
             {
                 deleteImg();
             }
+
+            InvalidateQuickTagBox(sender, e);
         }
 
         private void deleteImg()
@@ -353,7 +355,7 @@ namespace ImageComparer
                 // Suppress the newline character
                 e.Handled = true;
 
-                quick_tag_box.Items.Add(add_quick_tag_box.Text);
+                quick_tag_box.Items.Add(add_quick_tag_box.Text.Replace('_', ' '));
                 add_quick_tag_box.Text = string.Empty;
 
                 save_quick_tags();
@@ -587,20 +589,31 @@ namespace ImageComparer
         {
             if (e.KeyChar == (char)Keys.Enter && (add_tag_box.Text != null || add_tag_box.Text != ""))
             {
+                string text = add_tag_box.Text.Replace('_', ' ');
                 // Suppress the newline character
                 e.Handled = true;
 
                 var tags = getTags();
 
-                if (tags.Contains(add_tag_box.Text))
+                if (tags.Contains(text))
                     return;
 
                 // Insert a new tag in the middle of the list
                 int middleIndex = tags.Count / 2;
-                tags.Insert(middleIndex, add_tag_box.Text);
+                tags.Insert(middleIndex, text);
                 update_tags(tags);
                 add_tag_box.Text = null;
             }
+        }
+
+        private void original_pic_Paint(object sender, PaintEventArgs e)
+        {
+            InvalidateQuickTagBox(sender, e);
+        }
+
+        private void compare_pic_Paint(object sender, PaintEventArgs e)
+        {
+            InvalidateQuickTagBox(sender, e);
         }
     }
 }
