@@ -72,9 +72,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FlowLayoutPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MiddleMouseMessageFilter.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -110,9 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\folder.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\title.png" />

@@ -31,17 +31,12 @@ namespace ImageComparer
         public Form1()
         {
             InitializeComponent();
-            // redraw quick_tag_box whenever tagLayoutPanel changed
-            InitializeTagLayout();
+
 
             // Middle button delete
             MiddleMouseMessageFilter messageFilter = new MiddleMouseMessageFilter(quick_tag_box);
             messageFilter.MiddleMouseClick += MessageFilter_MiddleMouseClick;
             System.Windows.Forms.Application.AddMessageFilter(messageFilter);
-
-            // ListBox coloring
-            quick_tag_box.DrawMode = DrawMode.OwnerDrawFixed;
-            quick_tag_box.DrawItem += quick_taglist_DrawItem;
 
 
             this.original_img_btn.Click += Original_Img_Btn_Click;
@@ -63,31 +58,6 @@ namespace ImageComparer
                     quick_tag_box.Items.Add(parts[i]);
                 }
             }
-        }
-
-        private void InitializeTagLayout()
-        {
-            FlowLayoutPanel originalFlowLayoutPanel = tagLayoutPanel;
-
-            // Create a new instance of CustomFlowLayoutPanel
-            TagFlowLayoutPanel customFlowLayoutPanel = new TagFlowLayoutPanel();
-
-            // Set the properties of the CustomFlowLayoutPanel to match the original FlowLayoutPanel
-            customFlowLayoutPanel.Location = originalFlowLayoutPanel.Location;
-            customFlowLayoutPanel.Size = originalFlowLayoutPanel.Size;
-            customFlowLayoutPanel.Anchor = originalFlowLayoutPanel.Anchor;
-            customFlowLayoutPanel.Dock = originalFlowLayoutPanel.Dock;
-            customFlowLayoutPanel.ChildTextChanged += InvalidateQuickTagBox;
-
-            // Add any child controls from the original FlowLayoutPanel to the CustomFlowLayoutPanel
-            foreach (Control control in originalFlowLayoutPanel.Controls)
-            {
-                customFlowLayoutPanel.Controls.Add(control);
-            }
-
-            // Replace the original FlowLayoutPanel with the CustomFlowLayoutPanel on the form
-            this.Controls.Remove(originalFlowLayoutPanel);
-            this.Controls.Add(customFlowLayoutPanel);
         }
 
         private void MessageFilter_MiddleMouseClick(object sender, MouseEventArgs e)
@@ -153,7 +123,7 @@ namespace ImageComparer
             return duplicates;
         }
 
-        private void showImage(int idx)
+        private void drawImage(int idx)
         {
             this.currentIdx = idx;
 
@@ -182,7 +152,7 @@ namespace ImageComparer
 
             if (this.filteredOriginals.Count > 0)
             {
-                showImage(0);
+                drawImage(0);
             }
         }
 
@@ -258,7 +228,7 @@ namespace ImageComparer
                 return;
             }
 
-            showImage(currentIdx);
+            drawImage(currentIdx);
         }
 
         private void orginal_img_txt_folder_DragDrop(object sender, DragEventArgs e)
@@ -446,9 +416,6 @@ namespace ImageComparer
         {
             base.OnMouseWheel(e);
 
-            if (quick_tag_box.Focused)
-                return;
-
             if (e.Delta > 0)
             {
                 flipToPrevImg();
@@ -464,7 +431,7 @@ namespace ImageComparer
             if (currentIdx >= 1)
             {
                 this.currentIdx--;
-                showImage(this.currentIdx);
+                drawImage(this.currentIdx);
             }
         }
         protected void flipToNextImg()
@@ -472,7 +439,7 @@ namespace ImageComparer
             if (currentIdx < this.filteredOriginals.Count - 1)
             {
                 this.currentIdx++;
-                showImage(this.currentIdx);
+                drawImage(this.currentIdx);
             }
         }
 
@@ -557,6 +524,7 @@ namespace ImageComparer
                 tagLayoutPanel.Controls.Add(btn);
             }
             tagLayoutPanel.Controls.Add(tagBox);
+            InvalidateQuickTagBox(null, null);
 
             // Auto save to tag.Dat
             saveTags();
@@ -604,16 +572,6 @@ namespace ImageComparer
                 update_tags(tags);
                 add_tag_box.Text = null;
             }
-        }
-
-        private void original_pic_Paint(object sender, PaintEventArgs e)
-        {
-            InvalidateQuickTagBox(sender, e);
-        }
-
-        private void compare_pic_Paint(object sender, PaintEventArgs e)
-        {
-            InvalidateQuickTagBox(sender, e);
         }
     }
 }
