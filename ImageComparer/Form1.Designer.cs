@@ -197,6 +197,7 @@
             this.compare_pic.Size = new System.Drawing.Size(372, 492);
             this.compare_pic.TabIndex = 2;
             this.compare_pic.TabStop = false;
+            this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
             // 
             // panel2
             // 
