@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Ookii.Dialogs.WinForms;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -67,19 +69,29 @@ namespace ImageComparer
 
         private void Original_Img_Btn_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            if (fbd.ShowDialog() == DialogResult.OK)
+            using (VistaFolderBrowserDialog folderDialog = new VistaFolderBrowserDialog())
             {
-                orginal_img_txt_folder.Text = fbd.SelectedPath;
+                folderDialog.Description = "Select a folder";
+
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedFolderPath = folderDialog.SelectedPath;
+                    orginal_img_txt_folder.Text = selectedFolderPath;
+                }
             }
         }
 
         private void compare_img_btn_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            if (fbd.ShowDialog() == DialogResult.OK)
+            using (VistaFolderBrowserDialog folderDialog = new VistaFolderBrowserDialog())
             {
-                compare_txt_folder.Text = fbd.SelectedPath;
+                folderDialog.Description = "Select a folder";
+
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedFolderPath = folderDialog.SelectedPath;
+                    compare_txt_folder.Text = selectedFolderPath;
+                }
             }
         }
 
@@ -228,6 +240,12 @@ namespace ImageComparer
                 return;
             }
 
+            // Reached end of list
+            if (currentIdx >= filteredComparions.Count)
+            {
+                currentIdx = filteredComparions.Count - 1;
+            }
+
             drawImage(currentIdx);
         }
 
@@ -273,12 +291,14 @@ namespace ImageComparer
         {
             this.originalImgs = loadimages(orginal_img_txt_folder.Text);
             this.tagDic = loadTags(orginal_img_txt_folder.Text);
+            this.original_watcher.Path = orginal_img_txt_folder.Text;
             startSlide();
         }
 
         private void compare_txt_folder_TextChanged(object sender, EventArgs e)
         {
             this.comparisonImgs = loadimages(compare_txt_folder.Text);
+            this.compare_watcher.Path = compare_txt_folder.Text;
             startSlide();
         }
 
@@ -571,6 +591,48 @@ namespace ImageComparer
                 tags.Insert(middleIndex, text);
                 update_tags(tags);
                 add_tag_box.Text = null;
+            }
+        }
+
+        private void copyCurrentWorksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (VistaFolderBrowserDialog folderDialog = new VistaFolderBrowserDialog())
+            {
+                folderDialog.Description = "Select a folder";
+
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedFolderPath = folderDialog.SelectedPath;
+
+                    foreach (var img in filteredComparions)
+                    {
+                        var basename = Path.GetFileName(img);
+                        string destinationPath = Path.Combine(selectedFolderPath, basename);
+                        File.Copy(img, destinationPath, true);
+                    }
+                }
+            }
+        }
+
+        private void copyImagesToReworkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (VistaFolderBrowserDialog folderDialog = new VistaFolderBrowserDialog())
+            {
+                folderDialog.Description = "Select a folder";
+
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedFolderPath = folderDialog.SelectedPath;
+                    var orginalList = loadimages(orginal_img_txt_folder.Text);
+                    IEnumerable<string> difference = orginalList.Where(path1 => !filteredComparions.Any(path2 => Path.GetFileName(path1) == Path.GetFileName(path2)));
+
+                    foreach (var img in difference)
+                    {
+                        var basename = Path.GetFileName(img);
+                        string destinationPath = Path.Combine(selectedFolderPath, basename);
+                        File.Copy(img, destinationPath, true);
+                    }
+                }
             }
         }
     }

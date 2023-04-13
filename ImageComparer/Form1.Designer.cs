@@ -49,6 +49,11 @@
             this.tagLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.add_tag_box = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.original_watcher = new System.IO.FileSystemWatcher();
+            this.compare_watcher = new System.IO.FileSystemWatcher();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.copyCurrentWorksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyImagesToReworkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ui_main.SuspendLayout();
             this.panel4.SuspendLayout();
             this.header_panel.SuspendLayout();
@@ -60,6 +65,9 @@
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.tagLayoutPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.original_watcher)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.compare_watcher)).BeginInit();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // ui_main
@@ -71,12 +79,12 @@
             this.ui_main.Controls.Add(this.panel4, 1, 0);
             this.ui_main.Controls.Add(this.header_panel, 0, 0);
             this.ui_main.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ui_main.Location = new System.Drawing.Point(0, 0);
+            this.ui_main.Location = new System.Drawing.Point(0, 28);
             this.ui_main.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ui_main.Name = "ui_main";
             this.ui_main.RowCount = 1;
             this.ui_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ui_main.Size = new System.Drawing.Size(1014, 778);
+            this.ui_main.Size = new System.Drawing.Size(1014, 750);
             this.ui_main.TabIndex = 0;
             // 
             // panel4
@@ -88,14 +96,14 @@
             this.panel4.Controls.Add(this.quick_tag_box);
             this.panel4.Location = new System.Drawing.Point(787, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(224, 772);
+            this.panel4.Size = new System.Drawing.Size(224, 744);
             this.panel4.TabIndex = 1;
             // 
             // add_quick_tag_box
             // 
             this.add_quick_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.add_quick_tag_box.Location = new System.Drawing.Point(3, 738);
+            this.add_quick_tag_box.Location = new System.Drawing.Point(3, 708);
             this.add_quick_tag_box.Name = "add_quick_tag_box";
             this.add_quick_tag_box.Size = new System.Drawing.Size(215, 25);
             this.add_quick_tag_box.TabIndex = 1;
@@ -112,7 +120,7 @@
             this.quick_tag_box.ItemHeight = 22;
             this.quick_tag_box.Location = new System.Drawing.Point(3, 5);
             this.quick_tag_box.Name = "quick_tag_box";
-            this.quick_tag_box.Size = new System.Drawing.Size(215, 730);
+            this.quick_tag_box.Size = new System.Drawing.Size(215, 664);
             this.quick_tag_box.Sorted = true;
             this.quick_tag_box.TabIndex = 0;
             this.quick_tag_box.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.quick_taglist_DrawItem);
@@ -132,7 +140,7 @@
             this.header_panel.Name = "header_panel";
             this.header_panel.RowCount = 1;
             this.header_panel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.header_panel.Size = new System.Drawing.Size(778, 772);
+            this.header_panel.Size = new System.Drawing.Size(778, 744);
             this.header_panel.TabIndex = 6;
             // 
             // tableLayoutPanel2
@@ -153,7 +161,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 140F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(772, 766);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(772, 738);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // uiTlp_Sub
@@ -172,7 +180,7 @@
             this.uiTlp_Sub.Padding = new System.Windows.Forms.Padding(5);
             this.uiTlp_Sub.RowCount = 1;
             this.uiTlp_Sub.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTlp_Sub.Size = new System.Drawing.Size(766, 508);
+            this.uiTlp_Sub.Size = new System.Drawing.Size(766, 480);
             this.uiTlp_Sub.TabIndex = 4;
             // 
             // original_pic
@@ -183,7 +191,7 @@
             this.original_pic.Location = new System.Drawing.Point(8, 9);
             this.original_pic.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.original_pic.Name = "original_pic";
-            this.original_pic.Size = new System.Drawing.Size(372, 490);
+            this.original_pic.Size = new System.Drawing.Size(372, 462);
             this.original_pic.TabIndex = 1;
             this.original_pic.TabStop = false;
             // 
@@ -194,7 +202,7 @@
             this.compare_pic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.compare_pic.Location = new System.Drawing.Point(386, 8);
             this.compare_pic.Name = "compare_pic";
-            this.compare_pic.Size = new System.Drawing.Size(372, 492);
+            this.compare_pic.Size = new System.Drawing.Size(372, 464);
             this.compare_pic.TabIndex = 2;
             this.compare_pic.TabStop = false;
             this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
@@ -348,6 +356,42 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Tags";
             // 
+            // original_watcher
+            // 
+            this.original_watcher.EnableRaisingEvents = true;
+            this.original_watcher.SynchronizingObject = this;
+            // 
+            // compare_watcher
+            // 
+            this.compare_watcher.EnableRaisingEvents = true;
+            this.compare_watcher.SynchronizingObject = this;
+            // 
+            // menuStrip
+            // 
+            this.menuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyCurrentWorksToolStripMenuItem,
+            this.copyImagesToReworkToolStripMenuItem});
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(1014, 28);
+            this.menuStrip.TabIndex = 1;
+            this.menuStrip.Text = "menuStrip1";
+            // 
+            // copyCurrentWorksToolStripMenuItem
+            // 
+            this.copyCurrentWorksToolStripMenuItem.Name = "copyCurrentWorksToolStripMenuItem";
+            this.copyCurrentWorksToolStripMenuItem.Size = new System.Drawing.Size(149, 24);
+            this.copyCurrentWorksToolStripMenuItem.Text = "Copy current works";
+            this.copyCurrentWorksToolStripMenuItem.Click += new System.EventHandler(this.copyCurrentWorksToolStripMenuItem_Click);
+            // 
+            // copyImagesToReworkToolStripMenuItem
+            // 
+            this.copyImagesToReworkToolStripMenuItem.Name = "copyImagesToReworkToolStripMenuItem";
+            this.copyImagesToReworkToolStripMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.copyImagesToReworkToolStripMenuItem.Text = "Copy images to rework";
+            this.copyImagesToReworkToolStripMenuItem.Click += new System.EventHandler(this.copyImagesToReworkToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -355,6 +399,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1014, 778);
             this.Controls.Add(this.ui_main);
+            this.Controls.Add(this.menuStrip);
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
@@ -376,7 +421,12 @@
             this.panel3.PerformLayout();
             this.tagLayoutPanel.ResumeLayout(false);
             this.tagLayoutPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.original_watcher)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.compare_watcher)).EndInit();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -403,6 +453,11 @@
         private System.Windows.Forms.TableLayoutPanel uiTlp_Sub;
         private System.Windows.Forms.PictureBox original_pic;
         private System.Windows.Forms.PictureBox compare_pic;
+        private System.IO.FileSystemWatcher original_watcher;
+        private System.IO.FileSystemWatcher compare_watcher;
+        private System.Windows.Forms.MenuStrip menuStrip;
+        private System.Windows.Forms.ToolStripMenuItem copyCurrentWorksToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyImagesToReworkToolStripMenuItem;
     }
 }
 
