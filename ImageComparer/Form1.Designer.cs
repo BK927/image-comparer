@@ -177,6 +177,7 @@
             // 
             // original_pic
             // 
+            this.original_pic.AllowDrop = true;
             this.original_pic.BackColor = System.Drawing.Color.DimGray;
             this.original_pic.BackgroundImage = global::ImageComparer.Properties.Resources.title;
             this.original_pic.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -186,9 +187,12 @@
             this.original_pic.Size = new System.Drawing.Size(372, 462);
             this.original_pic.TabIndex = 1;
             this.original_pic.TabStop = false;
+            this.original_pic.DragEnter += PictureBox_DragEnter;
+            this.original_pic.DragDrop += Original_PictureBox_DragDrop;
             // 
             // compare_pic
             // 
+            this.compare_pic.AllowDrop = true;
             this.compare_pic.BackColor = System.Drawing.Color.DimGray;
             this.compare_pic.BackgroundImage = global::ImageComparer.Properties.Resources.title;
             this.compare_pic.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -198,6 +202,8 @@
             this.compare_pic.TabIndex = 2;
             this.compare_pic.TabStop = false;
             this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
+            this.compare_pic.DragEnter += PictureBox_DragEnter;
+            this.compare_pic.DragDrop += Compare_PictureBox_DragDrop;
             // 
             // panel2
             // 

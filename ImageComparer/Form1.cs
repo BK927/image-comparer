@@ -775,6 +775,89 @@ namespace ImageComparer
             }
         }
 
+        private void PictureBox_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files != null && files.Length > 0)
+                {
+                    string ext = Path.GetExtension(files[0]).ToLower();
+                    if (ext == ".jpg" || ext == ".jpeg" || ext == ".png")
+                    {
+                        e.Effect = DragDropEffects.Copy;
+                        return;
+                    }
+                }
+            }
+            e.Effect = DragDropEffects.None;
+        }
+
+        private async void Original_PictureBox_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files?.Length > 0)
+                {
+                    string filePath = files[0];
+                    string folderPath = Path.GetDirectoryName(filePath);
+
+                    // 폴더 경로 설정
+                    orginal_img_txt_folder.Text = folderPath;
+
+                    // 현재 이미지를 드롭된 이미지로 설정
+                    await LoadImagePairByFileNameAsync(Path.GetFileName(filePath));
+                }
+            }
+        }
+
+        private async void Compare_PictureBox_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files?.Length > 0)
+                {
+                    string filePath = files[0];
+                    string folderPath = Path.GetDirectoryName(filePath);
+
+                    // 폴더 경로 설정
+                    compare_txt_folder.Text = folderPath;
+
+                    // 현재 이미지를 드롭된 이미지로 설정
+                    await LoadImagePairByFileNameAsync(Path.GetFileName(filePath));
+                }
+            }
+        }
+
+        // 파일 이름으로 이미지 쌍을 찾아 로드하는 메서드 추가
+        private async Task LoadImagePairByFileNameAsync(string fileName)
+        {
+            try
+            {
+                var pair = imagePairs.FirstOrDefault(p =>
+                    Path.GetFileName(p.OriginalPath) == fileName ||
+                    Path.GetFileName(p.ComparisonPath) == fileName);
+
+                if (pair != null)
+                {
+                    int index = imagePairs.IndexOf(pair);
+                    await LoadImagePairAsync(index);
+                }
+                else
+                {
+                    // 이미지 쌍을 찾지 못한 경우 새로고침
+                    await RefreshImagesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading image: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
