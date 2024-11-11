@@ -11,14 +11,6 @@
         /// 사용 중인 모든 리소스를 정리합니다.
         /// </summary>
         /// <param name="disposing">관리되는 리소스를 삭제해야 하면 true이고, 그렇지 않으면 false입니다.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
 
         #region Windows Form 디자이너에서 생성한 코드
 
@@ -233,6 +225,7 @@
             this.original_img_btn.TabIndex = 4;
             this.original_img_btn.Text = "open";
             this.original_img_btn.UseVisualStyleBackColor = true;
+            this.original_img_btn.Click += new System.EventHandler(this.Original_Img_Btn_Click);
             // 
             // original_Img_label
             // 
@@ -381,14 +374,14 @@
             // copyCurrentWorksToolStripMenuItem
             // 
             this.copyCurrentWorksToolStripMenuItem.Name = "copyCurrentWorksToolStripMenuItem";
-            this.copyCurrentWorksToolStripMenuItem.Size = new System.Drawing.Size(149, 24);
+            this.copyCurrentWorksToolStripMenuItem.Size = new System.Drawing.Size(155, 24);
             this.copyCurrentWorksToolStripMenuItem.Text = "Copy current works";
             this.copyCurrentWorksToolStripMenuItem.Click += new System.EventHandler(this.copyCurrentWorksToolStripMenuItem_Click);
             // 
             // copyImagesToReworkToolStripMenuItem
             // 
             this.copyImagesToReworkToolStripMenuItem.Name = "copyImagesToReworkToolStripMenuItem";
-            this.copyImagesToReworkToolStripMenuItem.Size = new System.Drawing.Size(176, 24);
+            this.copyImagesToReworkToolStripMenuItem.Size = new System.Drawing.Size(181, 24);
             this.copyImagesToReworkToolStripMenuItem.Text = "Copy images to rework";
             this.copyImagesToReworkToolStripMenuItem.Click += new System.EventHandler(this.copyImagesToReworkToolStripMenuItem_Click);
             // 
@@ -404,7 +397,6 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
             this.Text = "Image Comparer";
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.ui_main.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
