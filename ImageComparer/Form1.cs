@@ -22,6 +22,13 @@ namespace ImageComparer
             public string TagFilePath { get; set; }
         }
 
+        private class UndoAction
+        {
+            public int Index { get; set; }
+            public ImagePair ImagePair { get; set; }
+            public string TempFilePath { get; set; }
+        }
+
         private readonly List<ImagePair> imagePairs = new List<ImagePair>();
         private readonly HashSet<string> tagDictionary = new HashSet<string>();
         private static readonly string TAG_FILE_PATH = Path.Combine(
@@ -35,9 +42,10 @@ namespace ImageComparer
         private readonly string initialTitle;
         private bool isLoadingImages;
 
-        private readonly Dictionary<int, Image> imageCache = new Dictionary<int, Image>();
+        private readonly Dictionary<string, Image> imageCache = new Dictionary<string, Image>();
         private CancellationTokenSource loadingCancellation = new CancellationTokenSource();
         private const int PRELOAD_COUNT = 2;
+        private readonly Stack<UndoAction> undoStack = new Stack<UndoAction>();
 
         public Form1()
         {
@@ -49,11 +57,26 @@ namespace ImageComparer
             this.initialTitle = this.Text;
         }
 
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
 
-            // 리소스 정리
+            // 임시 폴더 정리
+            try
+            {
+                string tempFolder = Path.Combine(Path.GetTempPath(), "ImageComparerDeleted");
+                if (Directory.Exists(tempFolder))
+                {
+                    Directory.Delete(tempFolder, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"임시 파일 정리 중 오류: {ex.Message}");
+            }
+
+            // 기존 리소스 정리 코드...
             loadingCancellation.Cancel();
             foreach (var image in imageCache.Values)
             {
@@ -62,22 +85,34 @@ namespace ImageComparer
             imageCache.Clear();
         }
 
+
         private void SetupMessageFilter()
         {
             var messageFilter = new MiddleMouseMessageFilter(quick_tag_box);
-            messageFilter.MiddleMouseClick += async (s, e) => await DeleteCurrentImageAsync();
+            messageFilter.MiddleMouseClick += async (s, e) => {
+                Debug.WriteLine($"Middle click detected - Current index before delete: {currentIndex}");
+                Debug.WriteLine($"Current image path: {imagePairs[currentIndex].ComparisonPath}");
+
+                // 현재 마우스 위치의 컨트롤 확인
+                Point cursorPos = Cursor.Position;
+                Control control = this.GetChildAtPoint(this.PointToClient(cursorPos));
+                Debug.WriteLine($"Clicked control: {control?.Name ?? "none"}");
+
+                await DeleteCurrentImageAsync();
+            };
             Application.AddMessageFilter(messageFilter);
         }
 
         private void SetupFileWatchers()
         {
-            original_watcher.Created += async (s, e) => await RefreshImagesAsync();
-            original_watcher.Deleted += async (s, e) => await RefreshImagesAsync();
-            original_watcher.Renamed += async (s, e) => await RefreshImagesAsync();
+            original_watcher.Created += async (s, e) => await RefreshImagesAsync(currentIndex);
+            original_watcher.Deleted += async (s, e) => await RefreshImagesAsync(currentIndex);
+            original_watcher.Renamed += async (s, e) => await RefreshImagesAsync(currentIndex);
 
-            compare_watcher.Created += async (s, e) => await RefreshImagesAsync();
-            compare_watcher.Deleted += async (s, e) => await RefreshImagesAsync();
-            compare_watcher.Renamed += async (s, e) => await RefreshImagesAsync();
+            compare_watcher.Created += async (s, e) => await RefreshImagesAsync(currentIndex);
+            compare_watcher.Deleted += async (s, e) => await RefreshImagesAsync(currentIndex);
+            compare_watcher.Renamed += async (s, e) => await RefreshImagesAsync(currentIndex);
+
         }
 
         private string GetCacheKey(int index, string path)
@@ -122,7 +157,7 @@ namespace ImageComparer
             }
         }
 
-        private async Task RefreshImagesAsync()
+        private async Task RefreshImagesAsync(int? indexToLoad = null)
         {
             if (isLoadingImages ||
                 string.IsNullOrEmpty(orginal_img_txt_folder.Text) ||
@@ -183,6 +218,16 @@ namespace ImageComparer
             {
                 isLoadingImages = false;
                 UseWaitCursor = false;
+            }
+
+            if (imagePairs.Any())
+            {
+                int indexToUse = indexToLoad ?? currentIndex;
+                if (indexToUse < 0 || indexToUse >= imagePairs.Count)
+                    indexToUse = 0;
+
+                Debug.WriteLine($"이미지를 새로 고침했습니다. 인덱스 {indexToUse}의 이미지를 로드합니다.");
+                await LoadImagePairAsync(indexToUse);
             }
         }
 
@@ -310,8 +355,7 @@ namespace ImageComparer
 
             try
             {
-                string cacheKey = $"{index}_{type}";
-                if (!imageCache.ContainsKey(index))
+                if (!imageCache.ContainsKey(path))
                 {
                     byte[] imageBytes = await Task.Run(() => File.ReadAllBytes(path), token);
                     if (!token.IsCancellationRequested)
@@ -327,9 +371,9 @@ namespace ImageComparer
                         {
                             lock (imageCache)
                             {
-                                if (!imageCache.ContainsKey(index))
+                                if (!imageCache.ContainsKey(path))
                                 {
-                                    imageCache[index] = image;
+                                    imageCache[path] = image;
                                 }
                                 else
                                 {
@@ -349,6 +393,7 @@ namespace ImageComparer
                 // 미리 로딩 실패는 무시
             }
         }
+
 
         private void ClearCurrentImages()
         {
@@ -374,15 +419,46 @@ namespace ImageComparer
         {
             try
             {
-                var keysToRemove = imageCache.Keys
-                    .Where(k => Math.Abs(k - currentIndex) > PRELOAD_COUNT)
-                    .ToList();
+                // 현재 표시 중인 이미지와 주변 이미지의 경로를 수집
+                var pathsToKeep = new HashSet<string>();
 
+                // 현재 인덱스의 이미지 쌍
+                if (currentIndex >= 0 && currentIndex < imagePairs.Count)
+                {
+                    var currentPair = imagePairs[currentIndex];
+                    pathsToKeep.Add(currentPair.OriginalPath);
+                    pathsToKeep.Add(currentPair.ComparisonPath);
+                }
+
+                // 주변 이미지의 경로 수집
+                for (int i = 1; i <= PRELOAD_COUNT; i++)
+                {
+                    int prevIndex = currentIndex - i;
+                    int nextIndex = currentIndex + i;
+
+                    if (prevIndex >= 0)
+                    {
+                        var prevPair = imagePairs[prevIndex];
+                        pathsToKeep.Add(prevPair.OriginalPath);
+                        pathsToKeep.Add(prevPair.ComparisonPath);
+                    }
+
+                    if (nextIndex < imagePairs.Count)
+                    {
+                        var nextPair = imagePairs[nextIndex];
+                        pathsToKeep.Add(nextPair.OriginalPath);
+                        pathsToKeep.Add(nextPair.ComparisonPath);
+                    }
+                }
+
+                // 제거할 키 수집
+                var keysToRemove = imageCache.Keys.Where(k => !pathsToKeep.Contains(k)).ToList();
+
+                // 캐시에서 제거
                 foreach (var key in keysToRemove)
                 {
                     if (imageCache.TryGetValue(key, out var image))
                     {
-                        Debug.WriteLine($"캐시 제거: {key}");
                         image.Dispose();
                         imageCache.Remove(key);
                     }
@@ -393,6 +469,7 @@ namespace ImageComparer
                 Debug.WriteLine($"캐시 정리 중 오류: {ex.Message}");
             }
         }
+
 
         private void DisposeCache()
         {
@@ -416,11 +493,11 @@ namespace ImageComparer
             try
             {
                 // 캐시 확인
-                Debug.WriteLine($"캐시 확인 - Index: {currentIndex}");
+                Debug.WriteLine($"캐시 확인 - Path: {path}");
 
                 Image imageToSet = null;
 
-                if (imageCache.TryGetValue(currentIndex, out var cachedImage))
+                if (imageCache.TryGetValue(path, out var cachedImage))
                 {
                     Debug.WriteLine("캐시된 이미지 발견");
                     // 캐시된 이미지의 복사본 생성
@@ -455,7 +532,7 @@ namespace ImageComparer
                                 // 캐시에 저장
                                 lock (imageCache)
                                 {
-                                    imageCache[currentIndex] = cacheImage;
+                                    imageCache[path] = cacheImage;
                                 }
 
                                 return displayImage;
@@ -521,6 +598,7 @@ namespace ImageComparer
         }
 
 
+
         private Size CalculateTargetSize(Size originalSize, Size containerSize)
         {
             double ratioX = (double)containerSize.Width / originalSize.Width;
@@ -538,38 +616,98 @@ namespace ImageComparer
             if (currentIndex < 0 || currentIndex >= imagePairs.Count)
                 return;
 
+            Debug.WriteLine($"Deleting image at index: {currentIndex}");
+
             try
             {
-                var pair = imagePairs[currentIndex];
-                var oldImage = compare_pic.Image;
-                compare_pic.Image = null;
-                oldImage?.Dispose();
+                // 파일 감시자 비활성화
+                original_watcher.EnableRaisingEvents = false;
+                compare_watcher.EnableRaisingEvents = false;
 
+                var pair = imagePairs[currentIndex];
+
+                // 이미지 파일을 임시 폴더로 이동
+                string tempFolder = Path.Combine(Path.GetTempPath(), "ImageComparerDeleted");
+                Directory.CreateDirectory(tempFolder);
+                string tempFilePath = Path.Combine(tempFolder, Path.GetFileName(pair.ComparisonPath));
+
+                // 동일한 이름의 임시 파일이 있으면 삭제
+                if (File.Exists(tempFilePath))
+                {
+                    File.Delete(tempFilePath);
+                }
+
+                // 파일 이동
+                File.Move(pair.ComparisonPath, tempFilePath);
+
+                // Undo 정보를 스택에 저장
+                var undoAction = new UndoAction
+                {
+                    Index = currentIndex,
+                    ImagePair = pair,
+                    TempFilePath = tempFilePath
+                };
+
+                undoStack.Push(undoAction);
+
+                // 이미지 쌍 제거
                 lock (lockObject)
                 {
-                    deletionReserved = pair.ComparisonPath;
                     imagePairs.RemoveAt(currentIndex);
                 }
 
+                // 캐시에서 이미지 제거
+                lock (imageCache)
+                {
+                    if (imageCache.ContainsKey(pair.OriginalPath))
+                    {
+                        imageCache[pair.OriginalPath]?.Dispose();
+                        imageCache.Remove(pair.OriginalPath);
+                    }
+                    if (imageCache.ContainsKey(pair.ComparisonPath))
+                    {
+                        imageCache[pair.ComparisonPath]?.Dispose();
+                        imageCache.Remove(pair.ComparisonPath);
+                    }
+                }
+
+                // currentIndex 조정
                 if (imagePairs.Count == 0)
                 {
                     ClearImages();
-                    return;
+                    currentIndex = -1;
+                    Debug.WriteLine("이미지가 더 이상 없습니다. currentIndex를 -1로 설정합니다.");
                 }
-
-                if (currentIndex >= imagePairs.Count)
+                else if (currentIndex >= imagePairs.Count)
                 {
                     currentIndex = imagePairs.Count - 1;
+                    Debug.WriteLine($"currentIndex를 마지막 인덱스로 조정: {currentIndex}");
                 }
 
+                Debug.WriteLine($"삭제 후 인덱스 {currentIndex}의 이미지를 로드합니다.");
                 await LoadImagePairAsync(currentIndex);
+
+                // 타이틀 업데이트
+                this.Text = $"{initialTitle} - Viewing {currentIndex + 1}/{imagePairs.Count}";
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"이미지 삭제 중 오류: {ex.Message}", "오류",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            finally
+            {
+                // 파일 감시자 다시 활성화
+                original_watcher.EnableRaisingEvents = true;
+                compare_watcher.EnableRaisingEvents = true;
+            }
         }
+
+
+
+
+
 
         private void ClearImages()
         {
@@ -678,6 +816,13 @@ namespace ImageComparer
         {
             base.OnKeyUp(e);
 
+            if (e.KeyCode == Keys.Z && e.Control)
+            {
+                await UndoDeleteAsync();
+                return;
+            }
+
+            // 기존 키 처리 로직...
             if (e.KeyCode == Keys.Delete && quick_tag_box.Focused)
             {
                 if (quick_tag_box.SelectedItem != null)
@@ -721,6 +866,76 @@ namespace ImageComparer
                 Debug.WriteLine($"KeyUp error: {ex.Message}");
             }
         }
+
+        private async Task UndoDeleteAsync()
+        {
+            if (undoStack.Count == 0)
+            {
+                MessageBox.Show("실행 취소할 작업이 없습니다.", "실행 취소",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var undoAction = undoStack.Pop();
+
+            try
+            {
+                // 파일을 원래 위치로 이동
+                File.Move(undoAction.TempFilePath, undoAction.ImagePair.ComparisonPath);
+
+                // 이미지 쌍을 리스트에 원래 위치에 삽입
+                lock (lockObject)
+                {
+                    if (undoAction.Index >= 0 && undoAction.Index <= imagePairs.Count)
+                    {
+                        imagePairs.Insert(undoAction.Index, undoAction.ImagePair);
+                    }
+                    else
+                    {
+                        imagePairs.Add(undoAction.ImagePair);
+                    }
+                }
+
+                // 캐시에서 이미지 제거 (혹시 남아있을 수 있으므로)
+                lock (imageCache)
+                {
+                    if (imageCache.ContainsKey(undoAction.ImagePair.OriginalPath))
+                    {
+                        imageCache[undoAction.ImagePair.OriginalPath]?.Dispose();
+                        imageCache.Remove(undoAction.ImagePair.OriginalPath);
+                    }
+                    if (imageCache.ContainsKey(undoAction.ImagePair.ComparisonPath))
+                    {
+                        imageCache[undoAction.ImagePair.ComparisonPath]?.Dispose();
+                        imageCache.Remove(undoAction.ImagePair.ComparisonPath);
+                    }
+                }
+
+                // currentIndex 조정
+                if (currentIndex >= undoAction.Index)
+                {
+                    currentIndex++;
+                }
+                else
+                {
+                    currentIndex = undoAction.Index;
+                }
+
+                // 이미지 로드
+                await LoadImagePairAsync(currentIndex);
+
+                // 타이틀 업데이트
+                this.Text = $"{initialTitle} - Viewing {currentIndex + 1}/{imagePairs.Count}";
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"이미지 복원 중 오류: {ex.Message}", "오류",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
 
         protected override async void OnMouseWheel(MouseEventArgs e)
         {
@@ -943,22 +1158,26 @@ namespace ImageComparer
             using (var folderDialog = new VistaFolderBrowserDialog())
             {
                 folderDialog.Description = "Select destination folder";
-
                 if (folderDialog.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
                         UseWaitCursor = true;
+                        Debug.WriteLine("=== Copying Images ===");
+                        Debug.WriteLine($"Total images in pair: {imagePairs.Count}");
+
                         await Task.Run(() =>
                         {
                             foreach (var pair in imagePairs)
                             {
                                 var destPath = Path.Combine(folderDialog.SelectedPath,
                                     Path.GetFileName(pair.ComparisonPath));
+                                Debug.WriteLine($"Copying: {Path.GetFileName(pair.ComparisonPath)}");
                                 File.Copy(pair.ComparisonPath, destPath, true);
                             }
                         });
-                        MessageBox.Show("Files copied successfully.", "Success",
+
+                        MessageBox.Show($"Files copied successfully. Total: {imagePairs.Count}", "Success",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
