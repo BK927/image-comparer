@@ -34,7 +34,6 @@
             this.original_Img_label = new System.Windows.Forms.Label();
             this.orginal_img_txt_folder = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.compare_img_btn = new System.Windows.Forms.Button();
             this.compare_label = new System.Windows.Forms.Label();
             this.compare_txt_folder = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -44,8 +43,9 @@
             this.original_watcher = new System.IO.FileSystemWatcher();
             this.compare_watcher = new System.IO.FileSystemWatcher();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
-            this.copyCurrentWorksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyImagesToReworkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportCompletedImagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportUnprocessedImagesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.compare_img_btn = new System.Windows.Forms.Button();
             this.ui_main.SuspendLayout();
             this.panel4.SuspendLayout();
             this.header_panel.SuspendLayout();
@@ -71,12 +71,12 @@
             this.ui_main.Controls.Add(this.panel4, 1, 0);
             this.ui_main.Controls.Add(this.header_panel, 0, 0);
             this.ui_main.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ui_main.Location = new System.Drawing.Point(0, 28);
+            this.ui_main.Location = new System.Drawing.Point(0, 30);
             this.ui_main.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ui_main.Name = "ui_main";
             this.ui_main.RowCount = 1;
             this.ui_main.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ui_main.Size = new System.Drawing.Size(1014, 750);
+            this.ui_main.Size = new System.Drawing.Size(1014, 748);
             this.ui_main.TabIndex = 0;
             // 
             // panel4
@@ -88,14 +88,14 @@
             this.panel4.Controls.Add(this.quick_tag_box);
             this.panel4.Location = new System.Drawing.Point(787, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(224, 744);
+            this.panel4.Size = new System.Drawing.Size(224, 742);
             this.panel4.TabIndex = 1;
             // 
             // add_quick_tag_box
             // 
             this.add_quick_tag_box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.add_quick_tag_box.Location = new System.Drawing.Point(3, 708);
+            this.add_quick_tag_box.Location = new System.Drawing.Point(3, 706);
             this.add_quick_tag_box.Name = "add_quick_tag_box";
             this.add_quick_tag_box.Size = new System.Drawing.Size(215, 25);
             this.add_quick_tag_box.TabIndex = 1;
@@ -112,7 +112,7 @@
             this.quick_tag_box.ItemHeight = 22;
             this.quick_tag_box.Location = new System.Drawing.Point(3, 5);
             this.quick_tag_box.Name = "quick_tag_box";
-            this.quick_tag_box.Size = new System.Drawing.Size(215, 664);
+            this.quick_tag_box.Size = new System.Drawing.Size(215, 642);
             this.quick_tag_box.Sorted = true;
             this.quick_tag_box.TabIndex = 0;
             this.quick_tag_box.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.quick_taglist_DrawItem);
@@ -132,7 +132,7 @@
             this.header_panel.Name = "header_panel";
             this.header_panel.RowCount = 1;
             this.header_panel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.header_panel.Size = new System.Drawing.Size(778, 744);
+            this.header_panel.Size = new System.Drawing.Size(778, 742);
             this.header_panel.TabIndex = 6;
             // 
             // tableLayoutPanel2
@@ -153,7 +153,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 140F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(772, 738);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(772, 736);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // uiTlp_Sub
@@ -172,7 +172,7 @@
             this.uiTlp_Sub.Padding = new System.Windows.Forms.Padding(5);
             this.uiTlp_Sub.RowCount = 1;
             this.uiTlp_Sub.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTlp_Sub.Size = new System.Drawing.Size(766, 480);
+            this.uiTlp_Sub.Size = new System.Drawing.Size(766, 478);
             this.uiTlp_Sub.TabIndex = 4;
             // 
             // original_pic
@@ -184,11 +184,9 @@
             this.original_pic.Location = new System.Drawing.Point(8, 9);
             this.original_pic.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.original_pic.Name = "original_pic";
-            this.original_pic.Size = new System.Drawing.Size(372, 462);
+            this.original_pic.Size = new System.Drawing.Size(372, 460);
             this.original_pic.TabIndex = 1;
             this.original_pic.TabStop = false;
-            this.original_pic.DragEnter += PictureBox_DragEnter;
-            this.original_pic.DragDrop += Original_PictureBox_DragDrop;
             // 
             // compare_pic
             // 
@@ -198,12 +196,10 @@
             this.compare_pic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.compare_pic.Location = new System.Drawing.Point(386, 8);
             this.compare_pic.Name = "compare_pic";
-            this.compare_pic.Size = new System.Drawing.Size(372, 464);
+            this.compare_pic.Size = new System.Drawing.Size(372, 462);
             this.compare_pic.TabIndex = 2;
             this.compare_pic.TabStop = false;
             this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
-            this.compare_pic.DragEnter += PictureBox_DragEnter;
-            this.compare_pic.DragDrop += Compare_PictureBox_DragDrop;
             // 
             // panel2
             // 
@@ -272,18 +268,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(766, 49);
             this.panel1.TabIndex = 1;
-            // 
-            // compare_img_btn
-            // 
-            this.compare_img_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.compare_img_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.compare_img_btn.Location = new System.Drawing.Point(681, 3);
-            this.compare_img_btn.Name = "compare_img_btn";
-            this.compare_img_btn.Size = new System.Drawing.Size(82, 43);
-            this.compare_img_btn.TabIndex = 2;
-            this.compare_img_btn.Text = "open";
-            this.compare_img_btn.UseVisualStyleBackColor = true;
-            this.compare_img_btn.Click += new System.EventHandler(this.compare_img_btn_Click);
             // 
             // compare_label
             // 
@@ -369,27 +353,39 @@
             // 
             this.menuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyCurrentWorksToolStripMenuItem,
-            this.copyImagesToReworkToolStripMenuItem});
+            this.exportCompletedImagesMenuItem,
+            this.exportUnprocessedImagesMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1014, 28);
+            this.menuStrip.Size = new System.Drawing.Size(1014, 30);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
             // 
-            // copyCurrentWorksToolStripMenuItem
+            // exportCompletedImagesMenuItem
             // 
-            this.copyCurrentWorksToolStripMenuItem.Name = "copyCurrentWorksToolStripMenuItem";
-            this.copyCurrentWorksToolStripMenuItem.Size = new System.Drawing.Size(155, 24);
-            this.copyCurrentWorksToolStripMenuItem.Text = "Copy current works";
-            this.copyCurrentWorksToolStripMenuItem.Click += new System.EventHandler(this.copyCurrentWorksToolStripMenuItem_Click);
+            this.exportCompletedImagesMenuItem.Name = "exportCompletedImagesMenuItem";
+            this.exportCompletedImagesMenuItem.Size = new System.Drawing.Size(338, 26);
+            this.exportCompletedImagesMenuItem.Text = "Export completed images (Comparison folder)";
+            this.exportCompletedImagesMenuItem.Click += new System.EventHandler(this.copyCurrentWorksToolStripMenuItem_Click);
             // 
-            // copyImagesToReworkToolStripMenuItem
+            // exportUnprocessedImagesMenuItem
             // 
-            this.copyImagesToReworkToolStripMenuItem.Name = "copyImagesToReworkToolStripMenuItem";
-            this.copyImagesToReworkToolStripMenuItem.Size = new System.Drawing.Size(181, 24);
-            this.copyImagesToReworkToolStripMenuItem.Text = "Copy images to rework";
-            this.copyImagesToReworkToolStripMenuItem.Click += new System.EventHandler(this.copyImagesToReworkToolStripMenuItem_Click);
+            this.exportUnprocessedImagesMenuItem.Name = "exportUnprocessedImagesMenuItem";
+            this.exportUnprocessedImagesMenuItem.Size = new System.Drawing.Size(324, 26);
+            this.exportUnprocessedImagesMenuItem.Text = "Export unprocessed images (Original folder)";
+            this.exportUnprocessedImagesMenuItem.Click += new System.EventHandler(this.copyImagesToReworkToolStripMenuItem_Click);
+            // 
+            // compare_img_btn
+            // 
+            this.compare_img_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.compare_img_btn.Font = new System.Drawing.Font("Segoe UI Black", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.compare_img_btn.Location = new System.Drawing.Point(681, 3);
+            this.compare_img_btn.Name = "compare_img_btn";
+            this.compare_img_btn.Size = new System.Drawing.Size(82, 43);
+            this.compare_img_btn.TabIndex = 2;
+            this.compare_img_btn.Text = "open";
+            this.compare_img_btn.UseVisualStyleBackColor = true;
+            this.compare_img_btn.Click += new System.EventHandler(this.compare_img_btn_Click);
             // 
             // Form1
             // 
@@ -433,7 +429,6 @@
         private System.Windows.Forms.TableLayoutPanel ui_main;
         private System.Windows.Forms.Label original_Img_label;
         private System.Windows.Forms.TextBox orginal_img_txt_folder;
-        private System.Windows.Forms.Button compare_img_btn;
         private System.Windows.Forms.TextBox compare_txt_folder;
         private System.Windows.Forms.Label compare_label;
         private System.Windows.Forms.Label label2;
@@ -454,8 +449,9 @@
         private System.IO.FileSystemWatcher original_watcher;
         private System.IO.FileSystemWatcher compare_watcher;
         private System.Windows.Forms.MenuStrip menuStrip;
-        private System.Windows.Forms.ToolStripMenuItem copyCurrentWorksToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem copyImagesToReworkToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportCompletedImagesMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportUnprocessedImagesMenuItem;
+        private System.Windows.Forms.Button compare_img_btn;
     }
 }
 
