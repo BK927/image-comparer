@@ -187,6 +187,8 @@
             this.original_pic.Size = new System.Drawing.Size(372, 460);
             this.original_pic.TabIndex = 1;
             this.original_pic.TabStop = false;
+            this.original_pic.DragEnter += PictureBox_DragEnter;
+            this.original_pic.DragDrop += Original_PictureBox_DragDrop;
             // 
             // compare_pic
             // 
@@ -200,6 +202,8 @@
             this.compare_pic.TabIndex = 2;
             this.compare_pic.TabStop = false;
             this.compare_pic.LoadCompleted += new System.ComponentModel.AsyncCompletedEventHandler(this.compare_pic_LoadCompleted);
+            this.compare_pic.DragEnter += PictureBox_DragEnter;
+            this.compare_pic.DragDrop += Compare_PictureBox_DragDrop;
             // 
             // panel2
             // 
