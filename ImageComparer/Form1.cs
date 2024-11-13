@@ -1,10 +1,13 @@
 ﻿using Ookii.Dialogs.WinForms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -32,6 +35,10 @@ namespace ImageComparer
         private readonly string initialTitle;
         private bool isLoadingImages;
 
+        private readonly Dictionary<int, Image> imageCache = new Dictionary<int, Image>();
+        private CancellationTokenSource loadingCancellation = new CancellationTokenSource();
+        private const int PRELOAD_COUNT = 2;
+
         public Form1()
         {
             InitializeComponent();
@@ -40,6 +47,19 @@ namespace ImageComparer
             LoadQuickTags();
 
             this.initialTitle = this.Text;
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            // 리소스 정리
+            loadingCancellation.Cancel();
+            foreach (var image in imageCache.Values)
+            {
+                image?.Dispose();
+            }
+            imageCache.Clear();
         }
 
         private void SetupMessageFilter()
@@ -59,6 +79,12 @@ namespace ImageComparer
             compare_watcher.Deleted += async (s, e) => await RefreshImagesAsync();
             compare_watcher.Renamed += async (s, e) => await RefreshImagesAsync();
         }
+
+        private string GetCacheKey(int index, string path)
+        {
+            return $"{index}_{path}";
+        }
+
 
         private void LoadQuickTags()
         {
@@ -167,65 +193,344 @@ namespace ImageComparer
                            f.EndsWith(".png", StringComparison.OrdinalIgnoreCase));
         }
 
+
+
         private async Task LoadImagePairAsync(int index)
         {
             if (index < 0 || index >= imagePairs.Count)
+            {
+                Debug.WriteLine($"Invalid index: {index}, Count: {imagePairs.Count}");
                 return;
+            }
 
             try
             {
+                // 이전 작업 취소
+                var oldCancellation = loadingCancellation;
+                loadingCancellation = new CancellationTokenSource();
+                oldCancellation?.Cancel();
+                oldCancellation?.Dispose();
+
                 currentIndex = index;
                 var pair = imagePairs[index];
 
+                // 파일 존재 여부 확인
+                if (!File.Exists(pair.OriginalPath) || !File.Exists(pair.ComparisonPath))
+                {
+                    MessageBox.Show($"이미지 파일을 찾을 수 없습니다.\nOriginal: {pair.OriginalPath}\nComparison: {pair.ComparisonPath}",
+                        "파일 없음", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // UI 업데이트 시작
+                this.UseWaitCursor = true;
+
+                // 이미지 로드
                 await Task.WhenAll(
-                    LoadImageAsync(original_pic, pair.OriginalPath),
-                    LoadImageAsync(compare_pic, pair.ComparisonPath)
+                    LoadImageAsync(original_pic, pair.OriginalPath, loadingCancellation.Token),
+                    LoadImageAsync(compare_pic, pair.ComparisonPath, loadingCancellation.Token)
                 );
 
-                if (pair.TagFilePath != null)
+                if (!loadingCancellation.Token.IsCancellationRequested)
                 {
-                    var tags = await Task.Run(() =>
-                        File.ReadAllText(pair.TagFilePath)
-                            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                            .Select(t => t.Trim())
-                            .ToList());
+                    // 태그 처리
+                    if (pair.TagFilePath != null && File.Exists(pair.TagFilePath))
+                    {
+                        var tags = await Task.Run(() =>
+                            File.ReadAllText(pair.TagFilePath)
+                                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                .Select(t => t.Trim())
+                                .ToList());
 
-                    UpdateTags(tags);
-                }
-                else
-                {
-                    UpdateTags(new List<string>());
-                }
+                        UpdateTags(tags);
+                    }
+                    else
+                    {
+                        UpdateTags(new List<string>());
+                    }
 
-                this.Text = $"{initialTitle} - {pair.ComparisonPath}" +
-                    $"({index + 1}/{imagePairs.Count})";
+                    this.Text = $"{initialTitle} - {pair.ComparisonPath} ({index + 1}/{imagePairs.Count})";
+
+                    // 주변 이미지 미리 로딩
+                    _ = PreloadImagesAsync(index, loadingCancellation.Token);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"이미지 로딩 중 오류: {ex.Message}", "오류",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            finally
+            {
+                this.UseWaitCursor = false;
+            }
         }
 
-        private async Task LoadImageAsync(PictureBox pictureBox, string path)
+        private async Task PreloadImagesAsync(int currentIndex, CancellationToken token)
         {
             try
             {
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-                {
-                    var image = await Task.Run(() => Image.FromStream(stream));
-                    var oldImage = pictureBox.Image;
-                    // PictureBox의 SizeMode를 Zoom으로 설정
-                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-                    pictureBox.Image = image;
+                // 미리 로드할 인덱스 범위 계산
+                var startIndex = Math.Max(0, currentIndex - PRELOAD_COUNT);
+                var endIndex = Math.Min(imagePairs.Count - 1, currentIndex + PRELOAD_COUNT);
 
-                    oldImage?.Dispose();
+                var preloadIndices = Enumerable.Range(startIndex, endIndex - startIndex + 1)
+                    .Where(i => i != currentIndex);  // 현재 인덱스 제외
+
+                foreach (var index in preloadIndices)
+                {
+                    if (token.IsCancellationRequested)
+                        return;
+
+                    // 유효한 인덱스 재확인
+                    if (index >= 0 && index < imagePairs.Count)
+                    {
+                        var pair = imagePairs[index];
+                        if (pair != null)
+                        {
+                            await Task.WhenAll(
+                                PreloadImageAsync(pair.OriginalPath, index, "original", token),
+                                PreloadImageAsync(pair.ComparisonPath, index, "comparison", token)
+                            );
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"이미지 '{path}' 로딩 실패: {ex.Message}");
+                // 미리 로딩 중 오류는 로그만 남기고 진행
+                Debug.WriteLine($"Preload error: {ex.Message}");
             }
+        }
+
+        private async Task PreloadImageAsync(string path, int index, string type, CancellationToken token)
+        {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                return;
+
+            try
+            {
+                string cacheKey = $"{index}_{type}";
+                if (!imageCache.ContainsKey(index))
+                {
+                    byte[] imageBytes = await Task.Run(() => File.ReadAllBytes(path), token);
+                    if (!token.IsCancellationRequested)
+                    {
+                        var image = await Task.Run(() => {
+                            using (var ms = new MemoryStream(imageBytes))
+                            {
+                                return new Bitmap(Image.FromStream(ms, true, true));
+                            }
+                        }, token);
+
+                        if (!token.IsCancellationRequested && image != null)
+                        {
+                            lock (imageCache)
+                            {
+                                if (!imageCache.ContainsKey(index))
+                                {
+                                    imageCache[index] = image;
+                                }
+                                else
+                                {
+                                    image.Dispose();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // 취소된 경우 무시
+            }
+            catch (Exception)
+            {
+                // 미리 로딩 실패는 무시
+            }
+        }
+
+        private void ClearCurrentImages()
+        {
+            try
+            {
+                var oldOriginal = original_pic.Image;
+                var oldCompare = compare_pic.Image;
+
+                original_pic.Image = null;
+                compare_pic.Image = null;
+
+                oldOriginal?.Dispose();
+                oldCompare?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ClearCurrentImages error: {ex.Message}");
+            }
+        }
+
+        // 캐시 관리
+        private void CleanupCache(int currentIndex)
+        {
+            try
+            {
+                var keysToRemove = imageCache.Keys
+                    .Where(k => Math.Abs(k - currentIndex) > PRELOAD_COUNT)
+                    .ToList();
+
+                foreach (var key in keysToRemove)
+                {
+                    if (imageCache.TryGetValue(key, out var image))
+                    {
+                        Debug.WriteLine($"캐시 제거: {key}");
+                        image.Dispose();
+                        imageCache.Remove(key);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"캐시 정리 중 오류: {ex.Message}");
+            }
+        }
+
+        private void DisposeCache()
+        {
+            try
+            {
+                foreach (var image in imageCache.Values)
+                {
+                    image?.Dispose();
+                }
+                imageCache.Clear();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"DisposeCache error: {ex.Message}");
+            }
+        }
+
+        private async Task LoadImageAsync(PictureBox pictureBox, string path, CancellationToken token)
+        {
+            Debug.WriteLine($"LoadImageAsync 시작 - Path: {path}");
+            try
+            {
+                // 캐시 확인
+                Debug.WriteLine($"캐시 확인 - Index: {currentIndex}");
+
+                Image imageToSet = null;
+
+                if (imageCache.TryGetValue(currentIndex, out var cachedImage))
+                {
+                    Debug.WriteLine("캐시된 이미지 발견");
+                    // 캐시된 이미지의 복사본 생성
+                    imageToSet = new Bitmap(cachedImage);
+                    Debug.WriteLine("캐시된 이미지 복제 완료");
+                }
+                else
+                {
+                    Debug.WriteLine("파일에서 이미지 로드 시작");
+                    byte[] imageBytes = await Task.Run(() => {
+                        Debug.WriteLine($"ReadAllBytes 시작 - {path}");
+                        var bytes = File.ReadAllBytes(path);
+                        Debug.WriteLine($"ReadAllBytes 완료 - 크기: {bytes.Length}");
+                        return bytes;
+                    }, token);
+
+                    if (token.IsCancellationRequested) return;
+
+                    Debug.WriteLine("이미지 생성 시작");
+                    imageToSet = await Task.Run(() => {
+                        try
+                        {
+                            using (var ms = new MemoryStream(imageBytes))
+                            using (var tempImage = Image.FromStream(ms, true, true))
+                            {
+                                Debug.WriteLine($"이미지 생성 완료 - 크기: {tempImage.Width}x{tempImage.Height}");
+                                // 캐시용 복사본 생성
+                                var cacheImage = new Bitmap(tempImage);
+                                // PictureBox용 복사본 생성
+                                var displayImage = new Bitmap(tempImage);
+
+                                // 캐시에 저장
+                                lock (imageCache)
+                                {
+                                    imageCache[currentIndex] = cacheImage;
+                                }
+
+                                return displayImage;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"이미지 생성 중 오류: {ex.Message}");
+                            throw;
+                        }
+                    }, token);
+                }
+
+                if (token.IsCancellationRequested)
+                {
+                    imageToSet?.Dispose();
+                    return;
+                }
+
+                Debug.WriteLine("PictureBox에 이미지 설정 시작");
+                var oldPicture = pictureBox.Image;
+                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+
+                // UI 스레드에서 이미지 설정
+                if (pictureBox.InvokeRequired)
+                {
+                    await pictureBox.InvokeAsync(() =>
+                    {
+                        if (!token.IsCancellationRequested)
+                        {
+                            pictureBox.Image = imageToSet;
+                            oldPicture?.Dispose();
+                        }
+                        else
+                        {
+                            imageToSet?.Dispose();
+                        }
+                    });
+                }
+                else
+                {
+                    if (!token.IsCancellationRequested)
+                    {
+                        pictureBox.Image = imageToSet;
+                        oldPicture?.Dispose();
+                    }
+                    else
+                    {
+                        imageToSet?.Dispose();
+                    }
+                }
+
+                Debug.WriteLine("LoadImageAsync 완료");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"LoadImageAsync 오류: {ex.Message}\n{ex.StackTrace}");
+                if (!token.IsCancellationRequested)
+                {
+                    throw new Exception($"이미지 '{path}' 로딩 실패: {ex.Message}", ex);
+                }
+            }
+        }
+
+
+        private Size CalculateTargetSize(Size originalSize, Size containerSize)
+        {
+            double ratioX = (double)containerSize.Width / originalSize.Width;
+            double ratioY = (double)containerSize.Height / originalSize.Height;
+            double ratio = Math.Min(ratioX, ratioY);
+
+            int newWidth = (int)(originalSize.Width * ratio);
+            int newHeight = (int)(originalSize.Height * ratio);
+
+            return new Size(newWidth, newHeight);
         }
 
         private async Task DeleteCurrentImageAsync()
@@ -386,39 +691,71 @@ namespace ImageComparer
             if (add_quick_tag_box.Focused || quick_tag_box.Focused || add_tag_box.Focused)
                 return;
 
-            switch (e.KeyCode)
+            try
             {
-                case Keys.Left:
-                    if (currentIndex > 0)
-                        await LoadImagePairAsync(currentIndex - 1);
-                    break;
+                switch (e.KeyCode)
+                {
+                    case Keys.Left:
+                        if (currentIndex > 0)
+                        {
+                            await LoadImagePairAsync(currentIndex - 1);
+                        }
+                        break;
 
-                case Keys.Right:
-                    if (currentIndex < imagePairs.Count - 1)
-                        await LoadImagePairAsync(currentIndex + 1);
-                    break;
+                    case Keys.Right:
+                        if (currentIndex < imagePairs.Count - 1)
+                        {
+                            await LoadImagePairAsync(currentIndex + 1);
+                        }
+                        break;
 
-                case Keys.Delete:
-                    await DeleteCurrentImageAsync();
-                    break;
+                    case Keys.Delete:
+                        await DeleteCurrentImageAsync();
+                        break;
+                }
+
+                InvalidateQuickTagBox();
             }
-
-            InvalidateQuickTagBox();
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"KeyUp error: {ex.Message}");
+            }
         }
 
         protected override async void OnMouseWheel(MouseEventArgs e)
         {
-            base.OnMouseWheel(e);
+            try
+            {
+                base.OnMouseWheel(e);
 
-            if (e.Delta > 0 && currentIndex > 0)
-            {
-                await LoadImagePairAsync(currentIndex - 1);
+                if (imagePairs.Count == 0) return;
+
+                int targetIndex = currentIndex;
+                if (e.Delta > 0 && currentIndex > 0)
+                {
+                    targetIndex = currentIndex - 1;
+                }
+                else if (e.Delta < 0 && currentIndex < imagePairs.Count - 1)
+                {
+                    targetIndex = currentIndex + 1;
+                }
+                else
+                {
+                    return; // 이동할 수 없는 경우 무시
+                }
+
+                // 인덱스 유효성 한번 더 체크
+                if (targetIndex >= 0 && targetIndex < imagePairs.Count)
+                {
+                    await LoadImagePairAsync(targetIndex);
+                }
             }
-            else if (e.Delta < 0 && currentIndex < imagePairs.Count - 1)
+            catch (Exception ex)
             {
-                await LoadImagePairAsync(currentIndex + 1);
+                Debug.WriteLine($"MouseWheel error: {ex.Message}");
             }
         }
+
 
         private async void compare_pic_LoadCompleted(object sender,
             System.ComponentModel.AsyncCompletedEventArgs e)
@@ -862,9 +1199,35 @@ namespace ImageComparer
         {
             if (disposing)
             {
-                original_pic.Image?.Dispose();
-                compare_pic.Image?.Dispose();
-                components?.Dispose();
+                try
+                {
+                    // 캐시된 이미지들 정리
+                    foreach (var image in imageCache.Values)
+                    {
+                        image?.Dispose();
+                    }
+                    imageCache.Clear();
+
+                    // PictureBox 이미지 정리
+                    if (original_pic?.Image != null)
+                    {
+                        original_pic.Image.Dispose();
+                        original_pic.Image = null;
+                    }
+                    if (compare_pic?.Image != null)
+                    {
+                        compare_pic.Image.Dispose();
+                        compare_pic.Image = null;
+                    }
+
+                    // 기타 컴포넌트 정리
+                    components?.Dispose();
+                    loadingCancellation?.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Dispose 중 오류: {ex.Message}");
+                }
             }
             base.Dispose(disposing);
         }
